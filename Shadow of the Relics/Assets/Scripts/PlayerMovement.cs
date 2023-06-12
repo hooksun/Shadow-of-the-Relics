@@ -10,9 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown;
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
+    public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
+    public float grappleStartSpeed, grappleAccel, grappleDecel;
+    public LineRenderer grapple;
     public int airDashes;
     public float DashDist, DashCooldown, DashStartSpeed, DashEndSpeed;
-    public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
     public float groundCheckCooldown;
     public Vector2 groundCheckOffset, groundCheckSize;
     public LayerMask groundMask, wallMask;
@@ -41,6 +43,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if(!ctx.started || jumpCooldown > 0f)
             return;
+        if(grappling)
+        {
+            if(grapplingSpeed <= 0f)
+                rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
+            CancelGrapple();
+            return;
+        }
         if(onWall != 0 && wallJump != wallJumps)
         {
             rb.velocity = new Vector2((float)onWall * WallJumpForce.x, WallJumpForce.y);
@@ -85,6 +94,57 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    bool grappling;
+    float grappleAcceling, grapplingSpeed, grappleDist;
+    Vector3 grappleDir;
+    GrapplePoint grapplePoint;
+    public void GrappleInput(InputAction.CallbackContext ctx)
+    {
+        if(!ctx.started)
+            return;
+
+        if(grappling)
+        {
+            CancelGrapple();
+            return;
+        }
+        grappling = true;
+        grapple.gameObject.SetActive(true);
+
+        float sqrDist = Mathf.Infinity;
+        grapplePoint = null;
+        foreach(GrapplePoint p in GrapplePoint.Points)
+        {
+            if(Vector2.SqrMagnitude(transform.position - p.position) < sqrDist)
+                grapplePoint = p;
+        }
+
+        if(grapplePoint == null)
+            return;
+
+        Vector3 grappleVec = grapplePoint.position - transform.position;
+        grappleDist = grappleVec.magnitude;
+        grappleDir = grappleVec.normalized;
+
+        float minDist = grappleStartSpeed * 0.5f * (grappleStartSpeed / grappleDecel);
+        if(minDist <= grappleDist)
+        {
+            grappleAcceling = 0f;
+            grapplingSpeed = Mathf.Sqrt(grappleDist * 2f * grappleDecel);
+            return;
+        }
+
+        grapplingSpeed = grappleStartSpeed;
+        grappleAcceling = (grappleDist-minDist)/grappleStartSpeed;
+    }
+
+    void CancelGrapple()
+    {
+        grappling = false;
+        grapplePoint = null;
+        grapple.gameObject.SetActive(false);
+    }
+
     void FixedUpdate()
     {
         velocity = rb.velocity - groundVelocity;
@@ -92,6 +152,7 @@ public class PlayerMovement : MonoBehaviour
         GroundCheck();
         Move();
         DoGravity();
+        Grappling();
         WallJump();
         Dash();
 
@@ -154,6 +215,37 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y -= (velocity.y > 0f?jumpGravity:(directionY<0f?diveGravity:fallGravity)) * Time.fixedDeltaTime;
         }
+    }
+
+    void Grappling()
+    {
+        if(!grappling)
+            return;
+        
+        if(grapplePoint == null)
+        {
+            grappling = false;
+            return;
+        }
+
+        if(grapplingSpeed <= 0f)
+        {
+            transform.position = grapplePoint.position;
+            velocity = Vector2.zero;
+            return;
+        }
+
+        grapple.SetPosition(0, transform.position);
+        grapple.SetPosition(1, grapplePoint.position);
+
+        if(grappleAcceling > 0f)
+        {
+            grapplingSpeed += grappleAccel * Time.fixedDeltaTime;
+            grappleAcceling -= Time.fixedDeltaTime;
+        }
+        else
+            grapplingSpeed -= grappleDecel * Time.fixedDeltaTime;
+        velocity = grappleDir * grapplingSpeed;
     }
 
     int onWall;
