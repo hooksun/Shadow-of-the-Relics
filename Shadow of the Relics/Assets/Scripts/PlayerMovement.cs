@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
-    public float grappleStartSpeed, grappleAccel, grappleDecel;
+    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel;
     public LineRenderer grapple;
     public int airDashes;
     public float DashDist, DashCooldown, DashStartSpeed, DashEndSpeed;
@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         if(grappling)
         {
-            if(grapplingSpeed <= 0f)
+            if(grappleDist <= 0f && directionY >= 0f)
                 rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
             CancelGrapple();
             return;
@@ -94,9 +94,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    bool grappling;
-    float grappleAcceling, grapplingSpeed, grappleDist;
-    Vector3 grappleDir;
+    bool grappling, grappleAcceling;
+    float grapplingSpeed, grappleCast;
     GrapplePoint grapplePoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
@@ -108,34 +107,25 @@ public class PlayerMovement : MonoBehaviour
             CancelGrapple();
             return;
         }
-        grappling = true;
-        grapple.gameObject.SetActive(true);
 
         float sqrDist = Mathf.Infinity;
         grapplePoint = null;
         foreach(GrapplePoint p in GrapplePoint.Points)
         {
-            if(Vector2.SqrMagnitude(transform.position - p.position) < sqrDist)
+            float newSqrDist = Vector2.SqrMagnitude(transform.position - p.position);
+            if(newSqrDist < sqrDist)
+            {
                 grapplePoint = p;
+                sqrDist = newSqrDist;
+            }
         }
 
         if(grapplePoint == null)
             return;
 
-        Vector3 grappleVec = grapplePoint.position - transform.position;
-        grappleDist = grappleVec.magnitude;
-        grappleDir = grappleVec.normalized;
-
-        float minDist = grappleStartSpeed * 0.5f * (grappleStartSpeed / grappleDecel);
-        if(minDist <= grappleDist)
-        {
-            grappleAcceling = 0f;
-            grapplingSpeed = Mathf.Sqrt(grappleDist * 2f * grappleDecel);
-            return;
-        }
-
-        grapplingSpeed = grappleStartSpeed;
-        grappleAcceling = (grappleDist-minDist)/grappleStartSpeed;
+        grappling = true;
+        grapple.gameObject.SetActive(true);
+        grappleCast = 0f;
     }
 
     void CancelGrapple()
@@ -161,6 +151,26 @@ public class PlayerMovement : MonoBehaviour
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;
+    }
+
+    void Update()
+    {
+        if(grappling)
+        {
+            if(grappleCast != 1f)
+            {
+                grappleCast = Mathf.MoveTowards(grappleCast, 1f, grappleCastSpeed * Time.deltaTime);
+                if(grappleCast == 1f)
+                {
+                    grappleDist = (grapplePoint.position - transform.position).magnitude;
+                    grapplingSpeed = Mathf.Min(grappleStartSpeed, Mathf.Sqrt(grappleDist * 2f * grappleDecel));
+                    grappleAcceling = grapplingSpeed == grappleStartSpeed;
+                }
+            }
+
+            grapple.SetPosition(0, transform.position);
+            grapple.SetPosition(1, Vector2.Lerp(transform.position, grapplePoint.position, grappleCast));
+        }
     }
 
     void ChangeGround(Transform newGround)
@@ -217,9 +227,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    float grappleDist;
     void Grappling()
     {
-        if(!grappling)
+        if(grappleCast != 1f || !grappling)
             return;
         
         if(grapplePoint == null)
@@ -228,24 +239,23 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if(grapplingSpeed <= 0f)
+        if(grappleDist <= 0f)
         {
             transform.position = grapplePoint.position;
             velocity = Vector2.zero;
             return;
         }
 
-        grapple.SetPosition(0, transform.position);
-        grapple.SetPosition(1, grapplePoint.position);
+        Vector3 grappleVec = (grapplePoint.position - transform.position);
+        grappleDist = grappleVec.magnitude;
 
-        if(grappleAcceling > 0f)
-        {
-            grapplingSpeed += grappleAccel * Time.fixedDeltaTime;
-            grappleAcceling -= Time.fixedDeltaTime;
-        }
-        else
-            grapplingSpeed -= grappleDecel * Time.fixedDeltaTime;
-        velocity = grappleDir * grapplingSpeed;
+        if(grappleAcceling && grappleDist <= grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel))
+            grappleAcceling = false;
+
+        grapplingSpeed += (grappleAcceling?grappleAccel:-grappleDecel) * Time.fixedDeltaTime;
+        grapplingSpeed = Mathf.Max(grappleMinSpeed, grapplingSpeed);
+        velocity = grappleVec.normalized * grapplingSpeed;
+        grappleDist -= grapplingSpeed * Time.fixedDeltaTime;
     }
 
     int onWall;
