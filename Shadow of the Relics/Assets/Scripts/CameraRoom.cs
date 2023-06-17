@@ -16,7 +16,6 @@ public class CameraRoom : MonoBehaviour
     public Vector2 UV(Vector2 pos)
     {
         pos -= (Vector2)transform.position;
-        pos += bounds * 0.5f;
 
         pos.x /= bounds.x;
         pos.y /= bounds.y;

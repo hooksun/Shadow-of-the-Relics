@@ -249,10 +249,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 grappleVec = (grapplePoint.position - transform.position);
         grappleDist = grappleVec.magnitude;
 
-        if(grappleAcceling && grappleDist <= grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel))
+        bool shouldDecel = grappleDist <= grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
+        if(grappleAcceling && shouldDecel)
             grappleAcceling = false;
 
-        grapplingSpeed += (grappleAcceling?grappleAccel:-grappleDecel) * Time.fixedDeltaTime;
+        grapplingSpeed += (grappleAcceling?grappleAccel:(shouldDecel?-grappleDecel:0f)) * Time.fixedDeltaTime;
         grapplingSpeed = Mathf.Max(grappleMinSpeed, grapplingSpeed);
         velocity = grappleVec.normalized * grapplingSpeed;
         grappleDist -= grapplingSpeed * Time.fixedDeltaTime;
@@ -261,6 +262,12 @@ public class PlayerMovement : MonoBehaviour
     int onWall;
     void WallJump()
     {
+        if(dashing || isGrounded || velocity.y > MinWallSpeed || directionY < 0f)
+        {
+            onWall = 0;
+            return;
+        }
+        
         Collider2D hit;
         onWall = HitWall(out hit);
         if(groundTrans == null && onWall != 0)
@@ -268,12 +275,6 @@ public class PlayerMovement : MonoBehaviour
             ChangeGround(hit.transform);
         }
 
-        if(dashing || isGrounded || velocity.y > MinWallSpeed || directionY < 0f)
-        {
-            onWall = 0;
-            return;
-        }
-        
         if(onWall != 0)
         {
             velocity.y = WallSlideSpeed;
@@ -283,10 +284,13 @@ public class PlayerMovement : MonoBehaviour
 
     int HitWall(out Collider2D hit)
     {
-        hit = Physics2D.OverlapBox((Vector2)transform.position + WallCheckPoint, WallCheckSize, 0f, wallMask);
+        hit = null;
+        if(direction > 0f)
+            hit = Physics2D.OverlapBox((Vector2)transform.position + WallCheckPoint, WallCheckSize, 0f, wallMask);
         if(hit)
             return 1;
-        hit = Physics2D.OverlapBox((Vector2)transform.position + WallCheckPoint * (Vector2.left + Vector2.up), WallCheckSize, 0f, wallMask);
+        if(direction < 0f)
+            hit = Physics2D.OverlapBox((Vector2)transform.position + WallCheckPoint * (Vector2.left + Vector2.up), WallCheckSize, 0f, wallMask);
         if(hit)
             return -1;
         return 0;

@@ -11,7 +11,7 @@ public class RoomGizmoDrawer : MonoBehaviour
         foreach(CameraRoom room in rooms)
         {
             Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
-            Gizmos.DrawCube(room.transform.position, (Vector3)room.bounds);
+            Gizmos.DrawCube(room.transform.position + (Vector3)room.bounds * 0.5f, (Vector3)room.bounds);
         }
     }
 }
