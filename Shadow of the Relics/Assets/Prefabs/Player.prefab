@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7739948866468981051}
   - component: {fileID: 2653406475684024757}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grapple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 8244692190373936788}
   - component: {fileID: 235967847613490792}
   - component: {fileID: 5136139121371294653}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}

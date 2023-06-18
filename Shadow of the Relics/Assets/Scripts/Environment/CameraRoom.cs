@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class CameraRoom : MonoBehaviour
 {
     public static List<CameraRoom> Rooms = new List<CameraRoom>();
@@ -24,7 +25,15 @@ public class CameraRoom : MonoBehaviour
 
     public bool inBound(Vector2 pos)
     {
-        pos = UV(pos);
-        return (Vector2.Max(pos, Vector2.one) == Vector2.one && Vector2.Min(pos, Vector2.zero) == Vector2.zero);
+        pos -= (Vector2)transform.position;
+        return (Vector2.Max(pos, bounds) == bounds && Vector2.Min(pos, Vector2.zero) == Vector2.zero);
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+        Gizmos.DrawCube(transform.position + (Vector3)bounds * 0.5f, (Vector3)bounds);
+    }
+#endif
 }

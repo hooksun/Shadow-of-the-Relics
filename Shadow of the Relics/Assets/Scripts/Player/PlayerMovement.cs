@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public Rigidbody2D rb;
+    public Camera cam;
 
     public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown;
     public int airJumps, wallJumps;
@@ -110,9 +111,10 @@ public class PlayerMovement : MonoBehaviour
 
         float sqrDist = Mathf.Infinity;
         grapplePoint = null;
+        Vector3 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
         foreach(GrapplePoint p in GrapplePoint.Points)
         {
-            float newSqrDist = Vector2.SqrMagnitude(transform.position - p.position);
+            float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
             if(newSqrDist < sqrDist)
             {
                 grapplePoint = p;

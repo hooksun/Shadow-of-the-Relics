@@ -33,7 +33,7 @@ public class CameraRig : MonoBehaviour
             return;
 
         Vector2 targetUV = current.UV(Target.transform.position);
-        Vector2 camLocalPosition = bounds*0.5f + ((targetUV) * (current.bounds-bounds));
+        Vector2 camLocalPosition = Vector2.Min(current.bounds, bounds)*0.5f + ((targetUV) * Vector2.Max(current.bounds-bounds, Vector2.zero));
 
         Vector3 newPos = (Vector3)((Vector2)current.transform.position + camLocalPosition) + Vector3.forward * transform.position.z;
 
