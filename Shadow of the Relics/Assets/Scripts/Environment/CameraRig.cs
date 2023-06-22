@@ -29,7 +29,7 @@ public class CameraRig : MonoBehaviour
             current = FindTargetRoom();
         }
 
-        Vector3 newPos = Target.transform.position;
+        Vector3 newPos = Target.transform.position + Vector3.forward * transform.position.z;
         if(current != null)
         {
             Vector2 targetUV = current.UV(Target.transform.position);

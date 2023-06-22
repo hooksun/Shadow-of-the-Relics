@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : PlayerBehaviour
 {
     public Rigidbody2D rb;
     public Camera cam;
@@ -25,8 +25,10 @@ public class PlayerMovement : MonoBehaviour
 
     Vector2 velocity, groundVelocity;
     bool isGrounded;
-    float direction, directionY, groundCooldown, dashCooldown, activeDir = 1f, jumpCooldown, wallJumpStopMove;
+    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove;
     int airJump, wallJump, airDash;
+
+    float activeDir{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
     public void ChangeDirection(InputAction.CallbackContext ctx)
     {
@@ -46,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         if(grappling)
         {
-            if(grappleDist <= 0f && directionY >= 0f)
+            if(grappleDist <= 0.01f && directionY >= 0f)
                 rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
             CancelGrapple();
             return;
@@ -153,6 +155,9 @@ public class PlayerMovement : MonoBehaviour
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;
+
+        player.Anim.SetFloat("horizontal velocity", Mathf.Abs(velocity.x));
+        player.Anim.SetBool("is grounded", isGrounded);
     }
 
     void Update()
@@ -241,14 +246,14 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if(grappleDist <= 0f)
+        if(grappleDist <= 0.01f)
         {
-            transform.position = grapplePoint.position;
+            transform.position = (Vector2)grapplePoint.position;
             velocity = Vector2.zero;
             return;
         }
 
-        Vector3 grappleVec = (grapplePoint.position - transform.position);
+        Vector2 grappleVec = (grapplePoint.position - transform.position);
         grappleDist = grappleVec.magnitude;
 
         bool shouldDecel = grappleDist <= grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
@@ -259,6 +264,9 @@ public class PlayerMovement : MonoBehaviour
         grapplingSpeed = Mathf.Max(grappleMinSpeed, grapplingSpeed);
         velocity = grappleVec.normalized * grapplingSpeed;
         grappleDist -= grapplingSpeed * Time.fixedDeltaTime;
+
+        if(velocity.x != 0f)
+            activeDir = Mathf.Sign(velocity.x);
     }
 
     int onWall;

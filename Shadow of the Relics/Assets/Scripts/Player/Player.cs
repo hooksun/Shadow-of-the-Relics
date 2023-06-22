@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public PlayerMovement movement;
+    public Animator Anim;
+
     public float detectCooldown, stopDetectTime, latePositionTime;
 
     public Vector2 position{get=>transform.position;}
     [HideInInspector] public Vector2 latePosition;
+
+    void Awake()
+    {
+        movement.player = this;
+    }
 
     float detectTime;
     void FixedUpdate()
@@ -30,4 +38,9 @@ public class Player : MonoBehaviour
     {
         detectTime = stopDetectTime;
     }
+}
+
+public abstract class PlayerBehaviour : MonoBehaviour
+{
+    [HideInInspector] public Player player;
 }
