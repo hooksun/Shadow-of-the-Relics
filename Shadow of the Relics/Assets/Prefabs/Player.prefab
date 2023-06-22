@@ -146,6 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 331448260296037879}
   - component: {fileID: 249793253921097429}
+  - component: {fileID: -8936493148864951707}
   - component: {fileID: 5972743943060547891}
   - component: {fileID: 8244692190373936788}
   - component: {fileID: 235967847613490792}
@@ -225,6 +226,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-8936493148864951707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8140670639167282237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29c203ca4fdefa648adee6819a5264cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectCooldown: 0.1
+  stopDetectTime: 3
+  latePositionTime: 0.2
+  latePosition: {x: 0, y: 0}
 --- !u!114 &5972743943060547891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 8244692190373936788}
+  cam: {fileID: 0}
   speed: 15
   accel: 150
   airAccel: 90

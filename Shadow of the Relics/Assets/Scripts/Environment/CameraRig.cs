@@ -29,13 +29,14 @@ public class CameraRig : MonoBehaviour
             current = FindTargetRoom();
         }
 
-        if(current == null)
-            return;
+        Vector3 newPos = Target.transform.position;
+        if(current != null)
+        {
+            Vector2 targetUV = current.UV(Target.transform.position);
+            Vector2 camLocalPosition = Vector2.Min(current.bounds, bounds)*0.5f + ((targetUV) * Vector2.Max(current.bounds-bounds, Vector2.zero));
 
-        Vector2 targetUV = current.UV(Target.transform.position);
-        Vector2 camLocalPosition = Vector2.Min(current.bounds, bounds)*0.5f + ((targetUV) * Vector2.Max(current.bounds-bounds, Vector2.zero));
-
-        Vector3 newPos = (Vector3)((Vector2)current.transform.position + camLocalPosition) + Vector3.forward * transform.position.z;
+            newPos = (Vector3)((Vector2)current.transform.position + camLocalPosition) + Vector3.forward * transform.position.z;
+        }
 
         Vector2 transitionDir = (newPos - transform.position);
         if(transitionDir.sqrMagnitude > Target.velocity.sqrMagnitude * Time.deltaTime)

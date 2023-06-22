@@ -4,34 +4,34 @@ using UnityEngine;
 
 public class EnemyVision : EnemyBehaviour
 {
-    public SpriteRenderer sprite;
-    
-    public Vector2 bounds;
-    public LayerMask PlayerMask;
+    public LineRenderer LOSRenderer;
+    public float nonAggroDetectRadius;
+    public LayerMask ObstacleMask, PlayerMask;
 
-    public Color DetectedColor;
-
-    Color normalColor;
-    bool detected;
-    void FixedUpdate()
+    float detectLevel;
+    void Update()
     {
-        if(detected)
-            return;
-        
-        if(Physics2D.OverlapBox(transform.position, bounds, 0f, PlayerMask))
+        if(enemy.aggro)
         {
-            normalColor = sprite.color;
-            sprite.color = DetectedColor;
-            detected = true;
-            enemy.DetectPlayer();
-            StartCoroutine(StopDetect());
-        }
-    }
+            bool seePlayer = !Physics2D.Linecast(enemy.position + enemy.eyePosition, enemy.Target.position, ObstacleMask);
+            if(seePlayer)
+            {
+                LOSRenderer.SetPosition(0, enemy.position + enemy.eyePosition);
+                LOSRenderer.SetPosition(1, enemy.Target.position);
+                enemy.Target.Seen();
+            }
+            else if(!enemy.Target.detected)
+                enemy.StopChase();
 
-    IEnumerator StopDetect()
-    {
-        yield return new WaitForSeconds(5f);
-        detected = false;
-        sprite.color = normalColor;
+            LOSRenderer.enabled = seePlayer;
+            return;
+        }
+
+        Collider2D hit = Physics2D.OverlapCircle(enemy.position + enemy.eyePosition, nonAggroDetectRadius, PlayerMask);
+        if(hit && !Physics2D.Linecast(enemy.position + enemy.eyePosition, hit.transform.position, ObstacleMask))
+        {
+            enemy.SeePlayer(hit, Time.deltaTime);
+        }
+        
     }
 }
