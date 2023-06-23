@@ -5,16 +5,20 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public PlayerMovement movement;
+    public PlayerAnimator animator;
+    public SpriteRenderer sprite;
     public Animator Anim;
 
     public float detectCooldown, stopDetectTime, latePositionTime;
 
     public Vector2 position{get=>transform.position;}
+    public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
     [HideInInspector] public Vector2 latePosition;
 
     void Awake()
     {
         movement.player = this;
+        animator.player = this;
     }
 
     float detectTime;

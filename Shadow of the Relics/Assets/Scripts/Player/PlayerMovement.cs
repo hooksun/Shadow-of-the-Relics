@@ -20,15 +20,18 @@ public class PlayerMovement : PlayerBehaviour
     public Vector2 groundCheckOffset, groundCheckSize;
     public LayerMask groundMask, wallMask;
 
+    [HideInInspector] public bool isGrounded;
+    [HideInInspector] public Vector2 velocity;
+
     Transform groundTrans;
     IGround currentGround;
 
-    Vector2 velocity, groundVelocity;
-    bool isGrounded;
+    Vector2 groundVelocity;
+    
     float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove;
     int airJump, wallJump, airDash;
 
-    float activeDir{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
+    float activeDir{get=>(player.sprite.flipX?-1f:1f); set=>player.sprite.flipX = (value < 0f);}
 
     public void ChangeDirection(InputAction.CallbackContext ctx)
     {
@@ -137,6 +140,9 @@ public class PlayerMovement : PlayerBehaviour
         grappling = false;
         grapplePoint = null;
         grapple.gameObject.SetActive(false);
+        player.animator.SetRotate(Vector2.zero);
+        if(direction != 0f)
+            activeDir = direction;
     }
 
     void FixedUpdate()
@@ -155,9 +161,6 @@ public class PlayerMovement : PlayerBehaviour
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;
-
-        player.Anim.SetFloat("horizontal velocity", Mathf.Abs(velocity.x));
-        player.Anim.SetBool("is grounded", isGrounded);
     }
 
     void Update()
@@ -172,6 +175,11 @@ public class PlayerMovement : PlayerBehaviour
                     grappleDist = (grapplePoint.position - transform.position).magnitude;
                     grapplingSpeed = Mathf.Min(grappleStartSpeed, Mathf.Sqrt(grappleDist * 2f * grappleDecel));
                     grappleAcceling = grapplingSpeed == grappleStartSpeed;
+                    if(grappleAcceling)
+                    {
+                        float accelingDist = grappleDist - grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
+                        player.animator.GrappleRotateInit(accelingDist);
+                    }
                 }
             }
 
@@ -256,14 +264,19 @@ public class PlayerMovement : PlayerBehaviour
         Vector2 grappleVec = (grapplePoint.position - transform.position);
         grappleDist = grappleVec.magnitude;
 
-        bool shouldDecel = grappleDist <= grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
+        float accelingDist = grappleDist - grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
+        bool shouldDecel = accelingDist <= 0f;
         if(grappleAcceling && shouldDecel)
             grappleAcceling = false;
+
+        player.animator.GrappleRotate(grappleVec, accelingDist);
 
         grapplingSpeed += (grappleAcceling?grappleAccel:(shouldDecel?-grappleDecel:0f)) * Time.fixedDeltaTime;
         grapplingSpeed = Mathf.Max(grappleMinSpeed, grapplingSpeed);
         velocity = grappleVec.normalized * grapplingSpeed;
         grappleDist -= grapplingSpeed * Time.fixedDeltaTime;
+
+        
 
         if(velocity.x != 0f)
             activeDir = Mathf.Sign(velocity.x);

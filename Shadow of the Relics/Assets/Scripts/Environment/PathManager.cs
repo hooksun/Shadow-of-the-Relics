@@ -121,22 +121,27 @@ public class PathManager : MonoBehaviour
     {
         Paths = new List<Path>();
         Path current = null;
-        foreach(Vector3Int point in PathMap.cellBounds.allPositionsWithin)
+        Vector3Int pos = PathMap.cellBounds.position, end = pos + PathMap.cellBounds.size, point = pos;
+        for(point.y = pos.y; point.y < end.y; point.y++)
         {
-            if(!PathMap.HasTile(point))
+            for(point.x = pos.x; point.x < end.x; point.x++)
             {
-                current = null;
-                continue;
-            }
+                if(!PathMap.HasTile(point))
+                {
+                    current = null;
+                    continue;
+                }
 
-            if(current == null)
-            {
-                current = new Path(point, point);
-                Paths.Add(current);
-                continue;
-            }
+                if(current == null)
+                {
+                    current = new Path(point, point);
+                    Paths.Add(current);
+                    continue;
+                }
 
-            current.endCoord = point;
+                current.endCoord = point;
+            }
+            current = null;
         }
     }
 
@@ -146,9 +151,12 @@ public class PathManager : MonoBehaviour
         {
             if(LinkMap.HasTile(path.startCoord))
             {
-                Path linked = FindLinkedPath(path.startCoord, Vector3Int.zero, path);
-                if(linked != null && !path.HasLinkTo(linked))
+                LinkedPath = new List<Path>();
+                FindLinkedPath(path.startCoord, Vector3Int.zero, path);
+                foreach(Path linked in LinkedPath)
                 {
+                    if(path.HasLinkTo(linked))
+                        continue;
                     LinkType self = LinkType.left;
                     LinkType link = (linked.endCoord.x < path.startCoord.x-1?LinkType.right:LinkType.middle);
                     path.Links.Add(new Link(linked, -1f, self, link));
@@ -158,9 +166,12 @@ public class PathManager : MonoBehaviour
 
             if(LinkMap.HasTile(path.endCoord))
             {
-                Path linked = FindLinkedPath(path.endCoord, Vector3Int.zero, path);
-                if(linked != null && !path.HasLinkTo(linked))
+                LinkedPath = new List<Path>();
+                FindLinkedPath(path.endCoord, Vector3Int.zero, path);
+                foreach(Path linked in LinkedPath)
                 {
+                    if(path.HasLinkTo(linked))
+                        continue;
                     LinkType self = LinkType.right;
                     LinkType link = (linked.startCoord.x > path.endCoord.x+1?LinkType.left:LinkType.middle);
                     path.Links.Add(new Link(linked, 1f, self, link));
@@ -170,15 +181,19 @@ public class PathManager : MonoBehaviour
         }
     }
 
-    Path FindLinkedPath(Vector3Int point, Vector3Int direction, Path origin)
+    List<Path> LinkedPath;
+    void FindLinkedPath(Vector3Int point, Vector3Int direction, Path origin)
     {
         if(PathMap.HasTile(point))
         {
             Path path = PathAt(point);
             if(path != origin)
-                return path;
+            {
+                LinkedPath.Add(path);
+                return;
+            }
             if(direction != Vector3Int.zero)
-                return null;
+                return;
         }
         
         Vector3Int[] directions = {Vector3Int.left, Vector3Int.right, Vector3Int.down};
@@ -188,11 +203,8 @@ public class PathManager : MonoBehaviour
                 continue;
             if(!LinkMap.HasTile(point + directions[i]))
                 continue;
-            Path path = FindLinkedPath(point + directions[i], directions[i], origin);
-            if(path != null)
-                return path;
+            FindLinkedPath(point + directions[i], directions[i], origin);
         }
-        return null;
     }
 
     Path PathAt(Vector3Int point)
