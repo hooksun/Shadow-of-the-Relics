@@ -12,9 +12,9 @@ public class PlayerMovement : PlayerBehaviour
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
-    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel;
+    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel, maxPerchTime;
     public LineRenderer grapple;
-    public int airDashes;
+    public int airGrapples, airDashes;
     public float DashDist, DashCooldown, DashStartSpeed, DashEndSpeed;
     public float groundCheckCooldown;
     public Vector2 groundCheckOffset, groundCheckSize;
@@ -28,8 +28,8 @@ public class PlayerMovement : PlayerBehaviour
 
     Vector2 groundVelocity;
     
-    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove;
-    int airJump, wallJump, airDash;
+    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove, perchTime;
+    int airJump, wallJump, airDash, grapples;
 
     float activeDir{get=>(player.sprite.flipX?-1f:1f); set=>player.sprite.flipX = (value < 0f);}
 
@@ -105,7 +105,7 @@ public class PlayerMovement : PlayerBehaviour
     GrapplePoint grapplePoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started)
+        if(!ctx.started || grapples == airGrapples)
             return;
 
         if(grappling)
@@ -139,6 +139,7 @@ public class PlayerMovement : PlayerBehaviour
     {
         grappling = false;
         grapplePoint = null;
+        grappleCast = 0f;
         grapple.gameObject.SetActive(false);
         player.animator.SetRotate(Vector2.zero);
         if(direction != 0f)
@@ -175,6 +176,8 @@ public class PlayerMovement : PlayerBehaviour
                     grappleDist = (grapplePoint.position - transform.position).magnitude;
                     grapplingSpeed = Mathf.Min(grappleStartSpeed, Mathf.Sqrt(grappleDist * 2f * grappleDecel));
                     grappleAcceling = grapplingSpeed == grappleStartSpeed;
+                    grapples++;
+                    perchTime = 0f;
                     if(grappleAcceling)
                     {
                         float accelingDist = grappleDist - grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
@@ -205,6 +208,9 @@ public class PlayerMovement : PlayerBehaviour
             return;
         }
 
+        if(grappling && grappleCast == 1f)
+            return;
+
         Collider2D newGround = Physics2D.OverlapBox((Vector2)transform.position + groundCheckOffset, groundCheckSize, 0f, groundMask);
         ChangeGround((newGround==null?null:newGround.transform));
         if(isGrounded != newGround)
@@ -212,7 +218,7 @@ public class PlayerMovement : PlayerBehaviour
             isGrounded = !isGrounded;
             if(isGrounded)
             {
-                airJump = wallJump = airDash = 0;
+                airJump = wallJump = airDash = grapples = 0;
             }
         }
     }
@@ -258,6 +264,9 @@ public class PlayerMovement : PlayerBehaviour
         {
             transform.position = (Vector2)grapplePoint.position;
             velocity = Vector2.zero;
+            perchTime += Time.fixedDeltaTime;
+            if(perchTime >= maxPerchTime)
+                CancelGrapple();
             return;
         }
 

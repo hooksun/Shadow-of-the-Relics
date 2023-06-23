@@ -374,6 +374,7 @@ MonoBehaviour:
   stopDetectTime: 3
   latePositionTime: 0.2
   latePosition: {x: 0, y: 0}
+  lastSeenPosition: {x: 0, y: 0}
 --- !u!114 &5972743943060547891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,7 +411,9 @@ MonoBehaviour:
   grappleMinSpeed: 5
   grappleAccel: 200
   grappleDecel: 300
+  maxPerchTime: 3
   grapple: {fileID: 2653406475684024757}
+  airGrapples: 3
   airDashes: 1
   DashDist: 6
   DashCooldown: 0.2

@@ -1412,6 +1412,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 2147483649
+  - first: {x: -26, y: 11, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 2147483649
   - first: {x: 31, y: 11, z: 0}
     second:
       serializedVersion: 2
@@ -1964,13 +1974,13 @@ Tilemap:
       m_AllTileFlags: 2147483649
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 170
+  - m_RefCount: 171
     m_Data: {fileID: 11400000, guid: c5ce05d16316a8c4fa76d982ca5e7c06, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 170
+  - m_RefCount: 171
     m_Data: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 170
+  - m_RefCount: 171
     m_Data:
       e00: 1
       e01: 0
@@ -1989,7 +1999,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 170
+  - m_RefCount: 171
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -2167,9 +2177,9 @@ CompositeCollider2D:
       - X: -250000000
         Y: 20000000
       - X: -250000000
-        Y: 110000000
+        Y: 120000000
       - X: -260000000
-        Y: 110000000
+        Y: 120000000
       - X: -260000000
         Y: -30000000
       - X: -100000000
@@ -2227,8 +2237,8 @@ CompositeCollider2D:
       - {x: -22, y: 1.0000293}
       - {x: -22.000029, y: 2}
       - {x: -25, y: 2.0000293}
-      - {x: -25.000029, y: 11}
-      - {x: -26, y: 10.99997}
+      - {x: -25.000029, y: 12}
+      - {x: -26, y: 11.99997}
       - {x: -25.999971, y: -3}
       - {x: -10, y: -3.0000293}
       - {x: -9.99997, y: -5}
@@ -2733,10 +2743,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 7189550665637505122, guid: 8945795d477ad7345964fc3b627cc374, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2939,10 +2945,6 @@ PrefabInstance:
     - target: {fileID: 7189550665637505122, guid: 8945795d477ad7345964fc3b627cc374, type: 3}
       propertyPath: m_Name
       value: Enemy (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7189550665637505122, guid: 8945795d477ad7345964fc3b627cc374, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4842,7 +4844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc857fd035c9ad49a434e129e50f17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounds: {x: 21, y: 14}
+  bounds: {x: 21, y: 15}
 --- !u!4 &1681156096
 Transform:
   m_ObjectHideFlags: 0
@@ -4978,10 +4980,6 @@ PrefabInstance:
     - target: {fileID: 7189550665637505122, guid: 8945795d477ad7345964fc3b627cc374, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 7189550665637505122, guid: 8945795d477ad7345964fc3b627cc374, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

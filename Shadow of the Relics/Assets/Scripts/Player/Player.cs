@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
     public Vector2 position{get=>transform.position;}
     public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
-    [HideInInspector] public Vector2 latePosition;
+    [HideInInspector] public Vector2 latePosition, lastSeenPosition;
 
     void Awake()
     {
@@ -37,10 +37,17 @@ public class Player : MonoBehaviour
         latePosition = pos;
     }
 
+    IEnumerator SetSeenPosition(Vector2 pos)
+    {
+        yield return new WaitForSeconds(latePositionTime);
+        lastSeenPosition = pos;
+    }
+
     public bool detected{get=>detectTime > 0f;}
     public void Seen()
     {
         detectTime = stopDetectTime;
+        StartCoroutine(SetSeenPosition(position));
     }
 }
 

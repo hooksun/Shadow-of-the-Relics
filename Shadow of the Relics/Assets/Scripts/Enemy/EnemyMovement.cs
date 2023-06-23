@@ -58,7 +58,7 @@ public class EnemyMovement : EnemyBehaviour
     {
         if(pathLinks.Count == 0)
         {
-            targetPos = PointOnPath(enemy.Target.latePosition, currentPath);
+            targetPos = PointOnPath(enemy.Target.lastSeenPosition, currentPath);
             return;
         }
 
