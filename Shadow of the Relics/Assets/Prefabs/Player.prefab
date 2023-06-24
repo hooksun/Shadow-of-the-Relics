@@ -101,7 +101,8 @@ MonoBehaviour:
   player: {fileID: 0}
   idleAnim: PlayerIdle
   runAnim: PlayerRun
-  jumpAnim: PlayerIdle
+  jumpAnim: PlayerJump
+  fallAnim: PlayerFall
   wallAnim: 
   grappleAnim: 
   perchAnim: 

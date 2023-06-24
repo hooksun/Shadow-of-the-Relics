@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerAnimator : PlayerBehaviour
 {
-    public string idleAnim, runAnim, jumpAnim, wallAnim, grappleAnim, perchAnim;
+    public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim;
     public float rotateSpeed;
 
     void Update()
@@ -15,22 +15,26 @@ public class PlayerAnimator : PlayerBehaviour
 
     void PlayDefaultAnimations()
     {
-        if(currentAnim != "")
+        if(playing)
             return;
 
-        if(!player.movement.isGrounded)
-        {
-            player.Anim.Play(jumpAnim);
+        string newAnim = CurrentDefaultAnimation();
+        if(currentAnim == newAnim)
             return;
-        }
-        if(player.movement.velocity.x != 0f)
-        {
-            player.Anim.Play(runAnim);
-            return;
-        }
-        player.Anim.Play(idleAnim);
+        currentAnim = newAnim;
+        player.Anim.Play(currentAnim);
     }
 
+    string CurrentDefaultAnimation()
+    {
+        if(!player.movement.isGrounded)
+            return (player.movement.velocity.y>0f?jumpAnim:fallAnim);
+        if(player.movement.velocity.x != 0f)
+            return runAnim;
+        return idleAnim;
+    }
+
+    bool playing;
     string currentAnim = "";
     public void Play(string anim)
     {
@@ -38,11 +42,13 @@ public class PlayerAnimator : PlayerBehaviour
             return;
         player.Anim.Play(anim);
         currentAnim = anim;
+        playing = true;
     }
 
     public void Stop()
     {
         currentAnim = "";
+        playing = false;
     }
 
     void AnimateRotate()
