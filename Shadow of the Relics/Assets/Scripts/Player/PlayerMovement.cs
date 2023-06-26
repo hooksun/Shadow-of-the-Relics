@@ -344,6 +344,12 @@ public class PlayerMovement : PlayerBehaviour
             dashing = false;
         }
     }
+
+
+    public void InteractInput(InputAction.CallbackContext ctx){
+        
+    }
+
 }
 
 public interface IGround
