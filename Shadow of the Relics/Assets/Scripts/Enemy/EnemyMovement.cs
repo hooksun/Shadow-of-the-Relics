@@ -49,7 +49,7 @@ public class EnemyMovement : EnemyBehaviour
             SetTargetPos();
             return true;
         }
-        pathLinks = PathManager.PathFind(currentPath, target, (enemy.aggro?enemy.Target.position:enemy.patrolPath.start));
+        pathLinks = PathManager.PathFind(currentPath, target, transform.position, (enemy.aggro?enemy.Target.position:enemy.patrolPath.start));
         SetTargetPos();
         return true;
     }

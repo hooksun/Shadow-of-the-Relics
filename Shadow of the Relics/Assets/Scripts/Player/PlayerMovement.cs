@@ -8,7 +8,8 @@ public class PlayerMovement : PlayerBehaviour
     public Rigidbody2D rb;
     public Camera cam;
 
-    public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown;
+    public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
+    public Vector2 damageKnockback;
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
@@ -47,7 +48,7 @@ public class PlayerMovement : PlayerBehaviour
 
     public void JumpInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || jumpCooldown > 0f)
+        if(!ctx.started || jumpCooldown > 0f || paralyzed > 0f)
             return;
         if(grappling)
         {
@@ -79,7 +80,7 @@ public class PlayerMovement : PlayerBehaviour
     Vector2 dashVel, dashDir, dashDrag;
     public void DashInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started)
+        if(!ctx.started || paralyzed > 0f)
             return;
 
         if(!dashing && dashCooldown <= 0f)
@@ -105,7 +106,7 @@ public class PlayerMovement : PlayerBehaviour
     GrapplePoint grapplePoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || grapples == airGrapples)
+        if(!ctx.started || grapples == airGrapples || paralyzed > 0f)
             return;
 
         if(grappling)
@@ -146,6 +147,17 @@ public class PlayerMovement : PlayerBehaviour
             activeDir = direction;
     }
 
+    float paralyzed;
+    public override void TakeDamage(float damage, Vector2 origin)
+    {
+        Vector2 knockback = damageKnockback;
+        knockback.x *= Mathf.Sign(transform.position.x - origin.x);
+        paralyzed = damageParalyzedTime;
+        if(grappling)
+            CancelGrapple();
+        rb.velocity = knockback;
+    }
+
     void FixedUpdate()
     {
         velocity = rb.velocity - groundVelocity;
@@ -159,6 +171,8 @@ public class PlayerMovement : PlayerBehaviour
 
         if(jumpCooldown > 0f)
             jumpCooldown -= Time.fixedDeltaTime;
+        if(paralyzed > 0f)
+            paralyzed -= Time.fixedDeltaTime;
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;
@@ -225,6 +239,8 @@ public class PlayerMovement : PlayerBehaviour
 
     void Move()
     {
+        if(paralyzed > 0f)
+            return;
         if(wallJumpStopMove > 0f)
         {
             wallJumpStopMove -= Time.fixedDeltaTime;

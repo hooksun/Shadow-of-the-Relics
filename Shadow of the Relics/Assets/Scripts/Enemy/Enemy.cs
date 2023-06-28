@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public EnemyVision vision;
     public EnemyPatrol patrol;
     public EnemyPatrolVision patrolVision;
+    public EnemyHitbox hitbox;
 
     public Vector2 eyePosition;
     public float halfWidth;
@@ -26,6 +27,7 @@ public class Enemy : MonoBehaviour
         vision.enemy = this;
         patrol.enemy = this;
         patrolVision.enemy = this;
+        hitbox.enemy = this;
 
         movement.enabled = false;
         vision.enabled = false;

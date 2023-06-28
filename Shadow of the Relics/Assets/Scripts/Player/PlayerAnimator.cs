@@ -73,7 +73,7 @@ public class PlayerAnimator : PlayerBehaviour
     float grappleMaxDistance;
     public void GrappleRotateInit(float initDist)
     {
-        grappleMaxDistance = initDist;
+        grappleMaxDistance = Mathf.Sqrt(initDist);
     }
 
     public void GrappleRotate(Vector2 direction, float dist)
@@ -81,6 +81,6 @@ public class PlayerAnimator : PlayerBehaviour
         if(dist <= 0f)
             SetRotate(Vector2.zero);
         else
-            SetRotateInstant(Vector3.Slerp(direction, Vector2.right * player.activeDir, dist/grappleMaxDistance));
+            SetRotateInstant(Vector3.Slerp(direction, Vector2.right * player.activeDir, Mathf.Sqrt(Mathf.Max(dist-1f,0f))/grappleMaxDistance));
     }
 }

@@ -6,10 +6,11 @@ public class Player : MonoBehaviour
 {
     public PlayerMovement movement;
     public PlayerAnimator animator;
+    public PlayerHealth health;
     public SpriteRenderer sprite;
     public Animator Anim;
 
-    public float detectCooldown, stopDetectTime, latePositionTime;
+    public float detectCooldown, stopDetectTime, latePositionTime, damageCooldown;
 
     public Vector2 position{get=>transform.position;}
     public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
@@ -19,9 +20,10 @@ public class Player : MonoBehaviour
     {
         movement.player = this;
         animator.player = this;
+        health.player = this;
     }
 
-    float detectTime;
+    float detectTime, damaged;
     void FixedUpdate()
     {
         StartCoroutine(SetLatePosition(position));
@@ -29,6 +31,19 @@ public class Player : MonoBehaviour
         {
             detectTime -= Time.fixedDeltaTime;
         }
+        if(damaged > 0f)
+            damaged -= Time.fixedDeltaTime;
+    }
+
+    public void TakeDamage(float damage, Vector2 origin)
+    {
+        if(damaged > 0f)
+            return;
+        
+        damaged = damageCooldown;
+        movement.TakeDamage(damage, origin);
+        animator.TakeDamage(damage, origin);
+        health.TakeDamage(damage, origin);
     }
 
     IEnumerator SetLatePosition(Vector2 pos)
@@ -54,4 +69,6 @@ public class Player : MonoBehaviour
 public abstract class PlayerBehaviour : MonoBehaviour
 {
     [HideInInspector] public Player player;
+
+    public virtual void TakeDamage(float damage, Vector2 origin){}
 }
