@@ -13,8 +13,8 @@ public class EnemyVision : EnemyBehaviour
     {
         if(enemy.aggro)
         {
-            bool seePlayer = !Physics2D.Linecast(enemy.position + enemy.eyePosition, enemy.Target.position, ObstacleMask);
-            if(seePlayer)
+            enemy.seePlayer = !Physics2D.Linecast(enemy.position + enemy.eyePosition, enemy.Target.position, ObstacleMask);
+            if(enemy.seePlayer)
             {
                 LOSRenderer.SetPosition(0, enemy.position + enemy.eyePosition);
                 LOSRenderer.SetPosition(1, enemy.Target.position);
@@ -23,7 +23,7 @@ public class EnemyVision : EnemyBehaviour
             else if(!enemy.Target.detected)
                 enemy.StopChase();
 
-            LOSRenderer.enabled = seePlayer;
+            LOSRenderer.enabled = enemy.seePlayer;
             return;
         }
 

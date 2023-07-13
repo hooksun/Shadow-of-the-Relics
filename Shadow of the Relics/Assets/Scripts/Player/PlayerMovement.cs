@@ -8,18 +8,20 @@ public class PlayerMovement : PlayerBehaviour
     public Rigidbody2D rb;
     public Camera cam;
 
-    public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
+    public float speed, accel, airAccel, jumpHeight, airJumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
     public Vector2 damageKnockback;
     public int airJumps, wallJumps;
-    public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
+    public Vector2 WallCheckPoint, WallCheckSize, WallJumpDistance;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
-    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel, maxPerchTime;
+    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel, maxPerchTime, minGrappleInputDistance;
+    public Vector2 grapplePerchOffset;
     public LineRenderer grapple;
     public int airGrapples, airDashes;
     public float DashDist, DashCooldown, DashStartSpeed, DashEndSpeed;
     public float groundCheckCooldown;
     public Vector2 groundCheckOffset, groundCheckSize;
     public LayerMask groundMask, wallMask;
+    public AudioPlayer RunAudio, GrappleHitAudio;
 
     [HideInInspector] public bool isGrounded;
     [HideInInspector] public Vector2 velocity;
@@ -46,9 +48,22 @@ public class PlayerMovement : PlayerBehaviour
         directionY = ctx.ReadValue<float>();
     }
 
+    bool isJumping;
     public void JumpInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || jumpCooldown > 0f || paralyzed > 0f)
+        if(ctx.performed)
+            return;
+        if(!ctx.started)
+        {
+            if(isJumping)
+            {
+                isJumping = false;
+                if(jumpCooldown <= 0f)
+                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(Mathf.Sqrt(jumpGravity), rb.velocity.y));
+            }
+            return;
+        }
+        if(jumpCooldown > 0f || paralyzed > 0f)
             return;
         if(grappling)
         {
@@ -59,7 +74,7 @@ public class PlayerMovement : PlayerBehaviour
         }
         if(onWall != 0 && wallJump != wallJumps)
         {
-            rb.velocity = new Vector2((float)onWall * WallJumpForce.x, WallJumpForce.y);
+            rb.velocity = new Vector2((float)onWall * -Mathf.Sqrt(2f * airAccel * WallJumpDistance.x), Mathf.Sqrt(2f * jumpGravity * WallJumpDistance.y));
             wallJumpStopMove = WallJumpStopMoveTime;
             wallJump++;
             return;
@@ -69,10 +84,13 @@ public class PlayerMovement : PlayerBehaviour
             if(velocity.y > 0f || airJump == airJumps)
                 return;
             airJump++;
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * airJumpHeight), 0f);
+            return;
         }
+        isJumping = true;
+        jumpCooldown = JumpCooldown;
         rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
         groundCooldown = groundCheckCooldown;
-        jumpCooldown = JumpCooldown;
         isGrounded = false;
     }
 
@@ -106,7 +124,7 @@ public class PlayerMovement : PlayerBehaviour
     GrapplePoint grapplePoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || grapples == airGrapples || paralyzed > 0f)
+        if(!ctx.started || paralyzed > 0f)
             return;
 
         if(grappling)
@@ -114,14 +132,16 @@ public class PlayerMovement : PlayerBehaviour
             CancelGrapple();
             return;
         }
+        if(grapples == airGrapples)
+            return;
 
-        float sqrDist = Mathf.Infinity;
+        float sqrDist = minGrappleInputDistance * minGrappleInputDistance;
         grapplePoint = null;
-        Vector3 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
         foreach(GrapplePoint p in GrapplePoint.Points)
         {
             float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
-            if(newSqrDist < sqrDist)
+            if(newSqrDist < sqrDist && !Physics2D.Linecast(transform.position, p.position, groundMask | wallMask))
             {
                 grapplePoint = p;
                 sqrDist = newSqrDist;
@@ -133,6 +153,7 @@ public class PlayerMovement : PlayerBehaviour
 
         grappling = true;
         grapple.gameObject.SetActive(true);
+        GrappleHitAudio.Play();
         grappleCast = 0f;
     }
 
@@ -169,8 +190,17 @@ public class PlayerMovement : PlayerBehaviour
         WallJump();
         Dash();
 
+        if(isGrounded && velocity.x != 0f)
+            RunAudio.Play();
+        else
+            RunAudio.Stop();
+
         if(jumpCooldown > 0f)
+        {
             jumpCooldown -= Time.fixedDeltaTime;
+            if(jumpCooldown <= 0f && !isJumping)
+                velocity = new Vector2(rb.velocity.x, Mathf.Min(Mathf.Sqrt(jumpGravity), velocity.y));
+        }
         if(paralyzed > 0f)
             paralyzed -= Time.fixedDeltaTime;
         
@@ -187,7 +217,7 @@ public class PlayerMovement : PlayerBehaviour
                 grappleCast = Mathf.MoveTowards(grappleCast, 1f, grappleCastSpeed * Time.deltaTime);
                 if(grappleCast == 1f)
                 {
-                    grappleDist = (grapplePoint.position - transform.position).magnitude;
+                    grappleDist = (grapplePoint.position + grapplePerchOffset - player.position).magnitude;
                     grapplingSpeed = Mathf.Min(grappleStartSpeed, Mathf.Sqrt(grappleDist * 2f * grappleDecel));
                     grappleAcceling = grapplingSpeed == grappleStartSpeed;
                     grapples++;
@@ -223,13 +253,16 @@ public class PlayerMovement : PlayerBehaviour
         }
 
         if(grappling && grappleCast == 1f)
+        {
+            isGrounded = false;
             return;
+        }
 
         Collider2D newGround = Physics2D.OverlapBox((Vector2)transform.position + groundCheckOffset, groundCheckSize, 0f, groundMask);
         ChangeGround((newGround==null?null:newGround.transform));
         if(isGrounded != newGround)
         {
-            isGrounded = !isGrounded;
+            isGrounded = newGround;
             if(isGrounded)
             {
                 airJump = wallJump = airDash = grapples = 0;
@@ -260,7 +293,19 @@ public class PlayerMovement : PlayerBehaviour
     {
         if(!isGrounded)
         {
-            velocity.y -= (velocity.y > 0f?jumpGravity:(directionY<0f?diveGravity:fallGravity)) * Time.fixedDeltaTime;
+            if(velocity.y > 0f)
+            {
+                // float grav = jumpGravity;
+                // if(isJumping)
+                //     grav = (jumpGravity * jumpHeight) / maxJumpHeight;
+                // velocity.y -= grav * Time.fixedDeltaTime;
+                velocity.y -= jumpGravity * Time.fixedDeltaTime;
+            }
+            else
+            {
+                velocity.y -= (directionY<0f?diveGravity:fallGravity) * Time.fixedDeltaTime;
+                isJumping = false;
+            }
         }
     }
 
@@ -278,15 +323,16 @@ public class PlayerMovement : PlayerBehaviour
 
         if(grappleDist <= 0.01f)
         {
-            transform.position = (Vector2)grapplePoint.position;
+            transform.position = (Vector2)grapplePoint.position + grapplePerchOffset;
             velocity = Vector2.zero;
+            player.animator.SetRotate(Vector2.zero);
             perchTime += Time.fixedDeltaTime;
             if(perchTime >= maxPerchTime)
                 CancelGrapple();
             return;
         }
 
-        Vector2 grappleVec = (grapplePoint.position - transform.position);
+        Vector2 grappleVec = (grapplePoint.position + grapplePerchOffset - player.position);
         grappleDist = grappleVec.magnitude;
 
         float accelingDist = grappleDist - grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);

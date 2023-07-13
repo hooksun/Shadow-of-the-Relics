@@ -17,7 +17,7 @@ public class EnemyHitbox : EnemyBehaviour
             player.TakeDamage(damage, (Vector2)transform.position + hitboxOffset);
 
             if(!enemy.aggro)
-                enemy.AllDetectPlayer(player);
+                Enemy.AllDetectPlayer(player);
         }
     }
 }

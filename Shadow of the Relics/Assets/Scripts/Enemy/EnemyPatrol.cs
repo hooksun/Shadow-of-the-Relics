@@ -10,6 +10,15 @@ public class EnemyPatrol : EnemyBehaviour
 
     float direction{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
+    public void StartPatrol()
+    {
+        turnCooldown = 0f;
+        if(Turn())
+        {
+            direction *= -1f;
+        }
+    }
+
     void Update()
     {
         Patrol();

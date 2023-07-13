@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 344765504456374401}
   - component: {fileID: 2659787439436955456}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1251453367519549031}
   - component: {fileID: 3197909149332820671}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LOS Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 25332452979163058}
   - component: {fileID: 326917233320562697}
   - component: {fileID: 850112976229304758}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,9 +298,10 @@ MonoBehaviour:
   jumpGravity: 100
   fallGravity: 80
   jumpDistance: 4
-  minJumpHeight: 2
+  minJumpHeight: 3
   jumpOvershootHeight: 1
-  attackRadius: 0
+  attackRadius: 6
+  aggroWanderDist: 6
 --- !u!114 &25332452979163058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,7 +374,7 @@ GameObject:
   - component: {fileID: 7177333876927034424}
   - component: {fileID: 1134171100407712472}
   - component: {fileID: 5441748210477594887}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

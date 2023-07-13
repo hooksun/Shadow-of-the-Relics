@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerAnimator : PlayerBehaviour
 {
     public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim;
-    public float rotateSpeed;
+    public float rotateSpeed, damagedOpacity;
+    public AnimationCurve pulseOpacityCurve;
+    public int damagedPulseAmount;
 
     void Update()
     {
@@ -82,5 +84,32 @@ public class PlayerAnimator : PlayerBehaviour
             SetRotate(Vector2.zero);
         else
             SetRotateInstant(Vector3.Slerp(direction, Vector2.right * player.activeDir, Mathf.Sqrt(Mathf.Max(dist-1f,0f))/grappleMaxDistance));
+    }
+
+    public override void TakeDamage(float damage, Vector2 origin)
+    {
+        StartCoroutine(PulseOpacity(player.damageCooldown, damagedPulseAmount, damagedOpacity));
+    }
+
+    IEnumerator PulseOpacity(float time, int amount, float opacity)
+    {
+        float pulseSpeed = 2f * (float)amount / time;
+        float t = -1f;
+        for(int i = 0; i < amount; i++)
+        {
+            while(t <= 1f)
+            {
+                Color newColor = player.sprite.color;
+                newColor.a = Mathf.Lerp(opacity, 1f, pulseOpacityCurve.Evaluate(Mathf.Abs(t)));
+                player.sprite.color = newColor;
+                
+                yield return null;
+                t += pulseSpeed * Time.deltaTime;
+            }
+            t -= 2f;
+        }
+        Color newCol = player.sprite.color;
+        newCol.a = 1f;
+        player.sprite.color = newCol;
     }
 }
