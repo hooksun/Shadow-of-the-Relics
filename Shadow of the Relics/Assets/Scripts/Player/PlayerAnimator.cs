@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerAnimator : PlayerBehaviour
 {
-    public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim;
+    public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim, damagedAnim;
     public float rotateSpeed, damagedOpacity;
     public AnimationCurve pulseOpacityCurve;
     public int damagedPulseAmount;
@@ -30,7 +30,11 @@ public class PlayerAnimator : PlayerBehaviour
     string CurrentDefaultAnimation()
     {
         if(!player.movement.isGrounded)
+        {
+            if(player.movement.onWall != 0f)
+                return wallAnim;
             return (player.movement.velocity.y>0f?jumpAnim:fallAnim);
+        }
         if(player.movement.velocity.x != 0f)
             return runAnim;
         return idleAnim;
@@ -40,7 +44,7 @@ public class PlayerAnimator : PlayerBehaviour
     string currentAnim = "";
     public void Play(string anim)
     {
-        if(currentAnim == anim)
+        if(currentAnim == anim || anim == "")
             return;
         player.Anim.Play(anim);
         currentAnim = anim;

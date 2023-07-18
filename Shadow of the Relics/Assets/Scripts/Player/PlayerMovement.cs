@@ -153,6 +153,7 @@ public class PlayerMovement : PlayerBehaviour
 
         grappling = true;
         grapple.gameObject.SetActive(true);
+        player.animator.Play(player.animator.grappleAnim);
         GrappleHitAudio.Play();
         grappleCast = 0f;
     }
@@ -163,6 +164,7 @@ public class PlayerMovement : PlayerBehaviour
         grapplePoint = null;
         grappleCast = 0f;
         grapple.gameObject.SetActive(false);
+        player.animator.Stop();
         player.animator.SetRotate(Vector2.zero);
         if(direction != 0f)
             activeDir = direction;
@@ -327,6 +329,7 @@ public class PlayerMovement : PlayerBehaviour
             velocity = Vector2.zero;
             player.animator.SetRotate(Vector2.zero);
             perchTime += Time.fixedDeltaTime;
+            player.animator.Play(player.animator.perchAnim);
             if(perchTime >= maxPerchTime)
                 CancelGrapple();
             return;
@@ -353,7 +356,7 @@ public class PlayerMovement : PlayerBehaviour
             activeDir = Mathf.Sign(velocity.x);
     }
 
-    int onWall;
+    [HideInInspector] public int onWall;
     void WallJump()
     {
         if(dashing || isGrounded || velocity.y > MinWallSpeed || directionY < 0f)

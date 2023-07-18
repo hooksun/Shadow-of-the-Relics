@@ -104,9 +104,10 @@ MonoBehaviour:
   runAnim: PlayerRun
   jumpAnim: PlayerJump
   fallAnim: PlayerFall
-  wallAnim: 
+  wallAnim: PlayerWall
   grappleAnim: 
   perchAnim: 
+  damagedAnim: 
   rotateSpeed: 450
   damagedOpacity: 0.6
   pulseOpacityCurve:
@@ -649,7 +650,7 @@ MonoBehaviour:
   damageKnockback: {x: 15, y: 18}
   airJumps: 1
   wallJumps: -1
-  WallCheckPoint: {x: 0.75, y: 0.25}
+  WallCheckPoint: {x: 0.5, y: 0.25}
   WallCheckSize: {x: 0.1, y: 0.2}
   WallJumpDistance: {x: 2, y: 6}
   WallSlideSpeed: -5
@@ -672,7 +673,7 @@ MonoBehaviour:
   DashEndSpeed: 8
   groundCheckCooldown: 0.01
   groundCheckOffset: {x: 0, y: -1}
-  groundCheckSize: {x: 1.48, y: 0.1}
+  groundCheckSize: {x: 0.98, y: 0.1}
   groundMask:
     serializedVersion: 2
     m_Bits: 8
@@ -683,6 +684,7 @@ MonoBehaviour:
   GrappleHitAudio: {fileID: 3372653269026982503}
   isGrounded: 0
   velocity: {x: 0, y: 0}
+  onWall: 0
 --- !u!114 &8292942061982674597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -869,7 +871,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.5, y: 2}
+  m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
 --- !u!1 &8582692916276576769
 GameObject:
