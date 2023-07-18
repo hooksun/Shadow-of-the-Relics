@@ -23,7 +23,7 @@ public class PlayerMovement : PlayerBehaviour
     public LayerMask groundMask, wallMask;
     public AudioPlayer RunAudio, GrappleHitAudio;
 
-    [HideInInspector] public bool isGrounded;
+    [HideInInspector] public bool isGrounded = true;
     [HideInInspector] public Vector2 velocity;
 
     Transform groundTrans;
@@ -121,7 +121,7 @@ public class PlayerMovement : PlayerBehaviour
 
     bool grappling, grappleAcceling;
     float grapplingSpeed, grappleCast;
-    GrapplePoint grapplePoint;
+    GrapplePoint grapplePoint, targettingPoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
         if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
@@ -135,27 +135,43 @@ public class PlayerMovement : PlayerBehaviour
         if(grapples == airGrapples)
             return;
 
-        float sqrDist = minGrappleInputDistance * minGrappleInputDistance;
-        grapplePoint = null;
-        Vector2 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        foreach(GrapplePoint p in GrapplePoint.Points)
-        {
-            float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
-            if(newSqrDist < sqrDist && !Physics2D.Linecast(transform.position, p.position, groundMask | wallMask))
-            {
-                grapplePoint = p;
-                sqrDist = newSqrDist;
-            }
-        }
-
-        if(grapplePoint == null)
+        if(targettingPoint == null)
             return;
+        grapplePoint = targettingPoint;
 
         grappling = true;
         grapple.gameObject.SetActive(true);
         player.animator.Play(player.animator.grappleAnim);
         GrappleHitAudio.Play();
         grappleCast = 0f;
+    }
+
+    void FindClosestGrapplePoint()
+    {
+        GrapplePoint newPoint = null;
+        if(grapples != airGrapples)
+        {
+            float sqrDist = minGrappleInputDistance * minGrappleInputDistance;
+            Vector2 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
+            foreach(GrapplePoint p in GrapplePoint.Points)
+            {
+                float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
+                if(newSqrDist < sqrDist && !Physics2D.Linecast(transform.position, p.position, groundMask | wallMask))
+                {
+                    newPoint = p;
+                    sqrDist = newSqrDist;
+                }
+            }
+        }
+
+        if(targettingPoint != newPoint)
+        {
+            if(targettingPoint != null)
+                targettingPoint.SetSprite(0);
+            targettingPoint = newPoint;
+            if(newPoint != null)
+                newPoint.SetSprite(1);
+        }
     }
 
     void CancelGrapple()
@@ -174,7 +190,7 @@ public class PlayerMovement : PlayerBehaviour
     public override void TakeDamage(float damage, Vector2 origin)
     {
         Vector2 knockback = damageKnockback;
-        knockback.x *= Mathf.Sign(transform.position.x - origin.x);
+        knockback.x *= (onWall == 0f?Mathf.Sign(transform.position.x - origin.x):-onWall);
         paralyzed = damageParalyzedTime;
         if(grappling)
             CancelGrapple();
@@ -210,6 +226,7 @@ public class PlayerMovement : PlayerBehaviour
 
     void Update()
     {
+        FindClosestGrapplePoint();
         if(grappling)
         {
             if(grappleCast != 1f)
@@ -266,6 +283,7 @@ public class PlayerMovement : PlayerBehaviour
             if(isGrounded)
             {
                 airJump = wallJump = airDash = grapples = 0;
+                RunAudio.Play();
             }
         }
     }

@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4490380459480499349}
+  - {fileID: 7739948866468981051}
   m_Father: {fileID: 331448260296037879}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -105,7 +106,7 @@ MonoBehaviour:
   jumpAnim: PlayerJump
   fallAnim: PlayerFall
   wallAnim: PlayerWall
-  grappleAnim: 
+  grappleAnim: PlayerGrappling
   perchAnim: 
   damagedAnim: 
   rotateSpeed: 450
@@ -247,12 +248,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7491474997935922563}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.181, y: -0.497, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 331448260296037879}
+  m_Father: {fileID: 6396114913327086859}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &2653406475684024757
@@ -308,7 +309,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.11688042
+        value: 0.07816887
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -539,7 +540,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7739948866468981051}
   - {fileID: 6396114913327086859}
   - {fileID: 2273405959231511491}
   - {fileID: 1762913984480890575}
@@ -681,7 +681,7 @@ MonoBehaviour:
     m_Bits: 8
   RunAudio: {fileID: 3920450284994220245}
   GrappleHitAudio: {fileID: 3372653269026982503}
-  isGrounded: 0
+  isGrounded: 1
   velocity: {x: 0, y: 0}
   onWall: 0
 --- !u!114 &8292942061982674597
