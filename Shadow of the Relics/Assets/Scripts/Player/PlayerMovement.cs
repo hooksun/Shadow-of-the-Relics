@@ -63,7 +63,7 @@ public class PlayerMovement : PlayerBehaviour
             }
             return;
         }
-        if(jumpCooldown > 0f || paralyzed > 0f)
+        if(jumpCooldown > 0f || paralyzed > 0f || Time.timeScale == 0f)
             return;
         if(grappling)
         {
@@ -98,7 +98,7 @@ public class PlayerMovement : PlayerBehaviour
     Vector2 dashVel, dashDir, dashDrag;
     public void DashInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || paralyzed > 0f)
+        if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
             return;
 
         if(!dashing && dashCooldown <= 0f)
@@ -124,7 +124,7 @@ public class PlayerMovement : PlayerBehaviour
     GrapplePoint grapplePoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || paralyzed > 0f)
+        if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
             return;
 
         if(grappling)
@@ -194,8 +194,6 @@ public class PlayerMovement : PlayerBehaviour
 
         if(isGrounded && velocity.x != 0f)
             RunAudio.Play();
-        else
-            RunAudio.Stop();
 
         if(jumpCooldown > 0f)
         {

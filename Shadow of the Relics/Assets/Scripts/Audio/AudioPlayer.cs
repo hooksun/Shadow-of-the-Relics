@@ -4,43 +4,43 @@ using UnityEngine;
 
 public class AudioPlayer : MonoBehaviour
 {
+    static List<AudioPlayer> ActiveAudios = new List<AudioPlayer>();
+
     public AudioSource source;
-    public float minPitch, maxPitch, loopLength;
-    public bool loop;
+    public float minPitch, maxPitch, length;
 
+    bool playing, onCooldown;
 
-    bool playing, looping;
+    void OnEnable()
+    {
+        ActiveAudios.Add(this);
+    }
+
+    void OnDisable()
+    {
+        ActiveAudios.Remove(this);
+    }
 
     public void Play()
     {
-        if(looping || source.isPlaying)
+        if(onCooldown)
             return;
 
-        playing = true;
-        StartCoroutine(PlayLoop());
+        //playing = true;
+        PlayAudio();
+        StartCoroutine(Cooldown(length));
     }
 
     public void Stop()
     {
-        playing = false;
+        //playing = false;
     }
 
-    IEnumerator PlayLoop()
+    IEnumerator Cooldown(float time)
     {
-        if(!loop)
-        {
-            PlayAudio();
-            yield break;
-        }
-
-        while(playing)
-        {
-            PlayAudio();
-
-            looping = true;
-            yield return new WaitForSeconds(loopLength);
-            looping = false;
-        }
+        onCooldown = true;
+        yield return new WaitForSeconds(time);
+        onCooldown = false;
     }
 
     void PlayAudio()
@@ -50,8 +50,27 @@ public class AudioPlayer : MonoBehaviour
         source.Play();
     }
 
-    public void ChangeVolume()
+    public void SetVolume()
     {
 
+    }
+
+    public static void PauseAll(bool pause)
+    {
+        foreach(AudioPlayer audio in ActiveAudios)
+        {
+            audio.Pause(pause);
+        }
+    }
+
+    void Pause(bool pause)
+    {
+        if(pause)
+        {
+            if(source.isPlaying)
+                source.Pause();
+            return;
+        }
+        source.UnPause();
     }
 }

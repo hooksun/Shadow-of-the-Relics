@@ -37,7 +37,8 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        patrolPath = PathManager.ClosestPathTo(transform.position);
+        if(patrolPath == null)
+            patrolPath = PathManager.ClosestPathTo(transform.position);
     }
 
     void OnEnable()
