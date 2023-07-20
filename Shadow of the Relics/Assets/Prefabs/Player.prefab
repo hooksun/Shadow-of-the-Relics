@@ -107,7 +107,7 @@ MonoBehaviour:
   fallAnim: PlayerFall
   wallAnim: PlayerWall
   grappleAnim: PlayerGrappling
-  perchAnim: 
+  perchAnim: PlayerPerch
   damagedAnim: 
   rotateSpeed: 450
   damagedOpacity: 0.6
@@ -662,7 +662,7 @@ MonoBehaviour:
   grappleDecel: 300
   maxPerchTime: 1
   minGrappleInputDistance: 8
-  grapplePerchOffset: {x: 0, y: 1}
+  grapplePerchOffset: {x: 0, y: 0.875}
   grapple: {fileID: 2653406475684024757}
   airGrapples: 3
   airDashes: 1

@@ -7,6 +7,7 @@ public class EnemyPatrol : EnemyBehaviour
     public float patrolSpeed, height, bumpLength, turnDelay;
     public Vector2 raycastPoint;
     public LayerMask ObstacleMask;
+    public AudioPlayer footstepAudio;
 
     float direction{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
@@ -38,6 +39,7 @@ public class EnemyPatrol : EnemyBehaviour
         }
 
         transform.position += Vector3.right * direction * patrolSpeed * Time.deltaTime;
+        footstepAudio.Play();
 
         if(Turn())
         {

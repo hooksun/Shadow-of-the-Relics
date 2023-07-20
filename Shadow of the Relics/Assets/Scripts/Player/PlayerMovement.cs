@@ -335,7 +335,7 @@ public class PlayerMovement : PlayerBehaviour
         
         if(grapplePoint == null)
         {
-            grappling = false;
+            CancelGrapple();
             return;
         }
 
@@ -346,6 +346,7 @@ public class PlayerMovement : PlayerBehaviour
             player.animator.SetRotate(Vector2.zero);
             perchTime += Time.fixedDeltaTime;
             player.animator.Play(player.animator.perchAnim);
+            grapple.gameObject.SetActive(false);
             if(perchTime >= maxPerchTime)
                 CancelGrapple();
             return;

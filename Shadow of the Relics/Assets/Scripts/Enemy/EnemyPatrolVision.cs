@@ -37,6 +37,7 @@ public class EnemyPatrolVision : EnemyBehaviour
 
         sprite.color = DetectedColor;
         detected = true;
+        enemy.patrol.enabled = false;
     }
 
     public void StartPatrol()
