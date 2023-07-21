@@ -7,7 +7,11 @@ public class CameraRoom : MonoBehaviour
 {
     public static List<CameraRoom> Rooms = new List<CameraRoom>();
 
-    public Vector2 bounds;
+    public Vector2 bounds, TRborder, BLborder;
+
+    public Vector2 outerBounds{get=>bounds + BLborder + TRborder;}
+    public Vector2 boundPosition{get=>transform.position;}
+    public Vector2 outerPosition{get=>boundPosition - BLborder;}
 
     void Start()
     {
@@ -29,11 +33,27 @@ public class CameraRoom : MonoBehaviour
         return (Vector2.Max(pos, bounds) == bounds && Vector2.Min(pos, Vector2.zero) == Vector2.zero);
     }
 
+    public bool inOuterBound(Vector2 pos)
+    {
+        pos -= outerPosition;
+        return (Vector2.Max(pos, outerBounds) == outerBounds && Vector2.Min(pos, Vector2.zero) == Vector2.zero);
+    }
+
 #if UNITY_EDITOR
     void OnDrawGizmos()
     {
-        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
-        Gizmos.DrawCube(transform.position + (Vector3)bounds * 0.5f, (Vector3)bounds);
+        Gizmos.color = new Color(1f, 1f, 0f, 0.05f);
+        Gizmos.DrawCube(outerPosition + outerBounds * 0.5f, outerBounds);
+        Gizmos.color = new Color(1f, 0f, 0f, 0.15f);
+        Gizmos.DrawCube(boundPosition + bounds * 0.5f, bounds);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(1f, 1f, 0f, 0.1f);
+        Gizmos.DrawCube(outerPosition + outerBounds * 0.5f, outerBounds);
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        Gizmos.DrawCube(boundPosition + bounds * 0.5f, bounds);
     }
 #endif
 }

@@ -51,16 +51,18 @@ public class PathManager : MonoBehaviour
         public Link link;
         public Path path;
         public PathFindLink parent;
+        public Vector2 position;
 
-        public PathFindLink(Link link, Path path, PathFindLink parent)
+        public PathFindLink(Link link, Path path, PathFindLink parent, Vector2 position)
         {
             this.link = link;
             this.path = path;
             this.parent = parent;
+            this.position = position;
         }
     }
 
-    public static List<Link> PathFind(Path start, Path target, Vector2 targetPos)
+    public static List<Link> PathFind(Path start, Path target, Vector2 startPos, Vector2 targetPos)
     {
         List<Link> links = new List<Link>();
         if(start == target)
@@ -69,7 +71,7 @@ public class PathManager : MonoBehaviour
         HashSet<Path> explored = new HashSet<Path>();
         List<PathFindLink> openSet = new List<PathFindLink>();
 
-        openSet.Add(new PathFindLink(null, start, null));
+        openSet.Add(new PathFindLink(null, start, null, startPos));
         PathFindLink current, closest = null;
         float distance = Mathf.Infinity;
         while(openSet.Count > 0)
@@ -77,6 +79,12 @@ public class PathManager : MonoBehaviour
             current = openSet[0];
             openSet.RemoveAt(0);
             explored.Add(current.path);
+
+            if(current.path == target)
+            {
+                closest = current;
+                break;
+            }
 
             float dist = current.path.DistanceFrom(targetPos);
             if(dist < distance)
@@ -89,27 +97,34 @@ public class PathManager : MonoBehaviour
             {
                 if(link.linkedPath == target)
                 {
-                    links.Add(link);
-                    while(current.link != null)
-                    {
-                        links.Add(current.link);
-                        current = current.parent;
-                    }
-                    links.Reverse();
-                    return links;
+                    openSet.Insert(0, new PathFindLink(link, link.linkedPath, current, link.LinkedPosition()));
+                    break;
                 }
 
                 if(explored.Contains(link.linkedPath))
                     continue;
 
-                openSet.Add(new PathFindLink(link, link.linkedPath, current));
+                openSet.Add(new PathFindLink(link, link.linkedPath, current, link.LinkedPosition()));
             }
         }
 
         current = closest;
         while(current.link != null)
         {
-            links.Add(current.link);
+            Link close = current.link;
+            float dist = Vector2.SqrMagnitude(current.position - current.parent.position);
+            foreach(Link link in current.link.selfPath.Links)
+            {
+                if(link.linkedPath != current.link.linkedPath)
+                    continue;
+                float newDist = Vector2.SqrMagnitude(link.LinkedPosition() - current.parent.position);
+                if(newDist < dist)
+                {
+                    close = link;
+                    dist = newDist;
+                }
+            }
+            links.Add(close);
             current = current.parent;
         }
 
@@ -155,12 +170,13 @@ public class PathManager : MonoBehaviour
                 FindLinkedPath(path.startCoord, Vector3Int.zero, path);
                 foreach(Path linked in LinkedPath)
                 {
-                    if(path.HasLinkTo(linked))
-                        continue;
                     LinkType self = LinkType.left;
                     LinkType link = (linked.endCoord.x < path.startCoord.x-1?LinkType.right:LinkType.middle);
-                    path.Links.Add(new Link(linked, -1f, self, link));
-                    linked.Links.Add(new Link(path, 1f, link, self));
+                    Link dupe = path.HasLinkTo(linked);
+                    if(dupe != null && self == dupe.selfType && link == dupe.linkedType)
+                        continue;
+                    path.Links.Add(new Link(path, linked, -1f, self, link));
+                    linked.Links.Add(new Link(linked, path, 1f, link, self));
                 }
             }
 
@@ -170,12 +186,13 @@ public class PathManager : MonoBehaviour
                 FindLinkedPath(path.endCoord, Vector3Int.zero, path);
                 foreach(Path linked in LinkedPath)
                 {
-                    if(path.HasLinkTo(linked))
-                        continue;
                     LinkType self = LinkType.right;
                     LinkType link = (linked.startCoord.x > path.endCoord.x+1?LinkType.left:LinkType.middle);
-                    path.Links.Add(new Link(linked, 1f, self, link));
-                    linked.Links.Add(new Link(path, -1f, link, self));
+                    Link dupe = path.HasLinkTo(linked);
+                    if(dupe != null && self == dupe.selfType && link == dupe.linkedType)
+                        continue;
+                    path.Links.Add(new Link(path, linked, 1f, self, link));
+                    linked.Links.Add(new Link(linked, path, -1f, link, self));
                 }
             }
         }
@@ -233,14 +250,19 @@ public class Path
         Links = new List<Link>();
     }
 
-    public bool HasLinkTo(Path path)
+    public Link HasLinkTo(Path path)
     {
         foreach(Link link in Links)
         {
             if(link.linkedPath == path)
-                return true;
+                return link;
         }
-        return false;
+        return null;
+    }
+
+    public Vector2 PointOnPath(Vector2 point, float width = 0f)
+    {
+        return new Vector2(Mathf.Clamp(point.x, start.x + width, end.x - width), start.y);
     }
 
     public float DistanceFrom(Vector2 coord)
@@ -260,16 +282,28 @@ public class Path
 
 public class Link
 {
-    public Path linkedPath;
+    public Path selfPath, linkedPath;
     public float direction;
     public LinkType selfType, linkedType;
 
-    public Link(Path path, float dir, LinkType selfType, LinkType linkedType)
+    public Link(Path path, Path link, float dir, LinkType selfType, LinkType linkedType)
     {
-        linkedPath = path;
+        selfPath = path;
+        linkedPath = link;
         direction = dir;
         this.selfType = selfType;
         this.linkedType = linkedType;
+    }
+
+    public Vector2 LinkedPosition()
+    {
+        if(linkedType == LinkType.left)
+            return linkedPath.start;
+        if(linkedType == LinkType.right)
+            return linkedPath.end;
+        if(selfType == LinkType.left)
+            return linkedPath.PointOnPath(selfPath.start);
+        return linkedPath.PointOnPath(selfPath.end);
     }
 
     public override string ToString()

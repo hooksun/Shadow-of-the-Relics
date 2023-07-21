@@ -8,8 +8,17 @@ public class PlayerHealth : PlayerBehaviour
 
     float health;
 
-    public void TakeDamage(float amount)
+    void Start()
     {
-        
+        health = maxHealth;
+    }
+
+    public override void TakeDamage(float damage, Vector2 origin)
+    {
+        health -= damage;
+        if(health <= 0f)
+        {
+            //ded
+        }
     }
 }

@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class PlayerAnimator : PlayerBehaviour
 {
-    public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim;
-    public float rotateSpeed;
+    public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim, damagedAnim;
+    public float rotateSpeed, damagedOpacity;
+    public AnimationCurve pulseOpacityCurve;
+    public int damagedPulseAmount;
 
     void Update()
     {
@@ -28,7 +30,11 @@ public class PlayerAnimator : PlayerBehaviour
     string CurrentDefaultAnimation()
     {
         if(!player.movement.isGrounded)
+        {
+            if(player.movement.onWall != 0f)
+                return wallAnim;
             return (player.movement.velocity.y>0f?jumpAnim:fallAnim);
+        }
         if(player.movement.velocity.x != 0f)
             return runAnim;
         return idleAnim;
@@ -38,7 +44,7 @@ public class PlayerAnimator : PlayerBehaviour
     string currentAnim = "";
     public void Play(string anim)
     {
-        if(currentAnim == anim)
+        if(currentAnim == anim || anim == "")
             return;
         player.Anim.Play(anim);
         currentAnim = anim;
@@ -73,7 +79,7 @@ public class PlayerAnimator : PlayerBehaviour
     float grappleMaxDistance;
     public void GrappleRotateInit(float initDist)
     {
-        grappleMaxDistance = initDist;
+        grappleMaxDistance = Mathf.Sqrt(initDist);
     }
 
     public void GrappleRotate(Vector2 direction, float dist)
@@ -81,6 +87,33 @@ public class PlayerAnimator : PlayerBehaviour
         if(dist <= 0f)
             SetRotate(Vector2.zero);
         else
-            SetRotateInstant(Vector3.Slerp(direction, Vector2.right * player.activeDir, dist/grappleMaxDistance));
+            SetRotateInstant(Vector3.Slerp(direction, Vector2.right * player.activeDir, Mathf.Sqrt(Mathf.Max(dist-1f,0f))/grappleMaxDistance));
+    }
+
+    public override void TakeDamage(float damage, Vector2 origin)
+    {
+        StartCoroutine(PulseOpacity(player.damageCooldown, damagedPulseAmount, damagedOpacity));
+    }
+
+    IEnumerator PulseOpacity(float time, int amount, float opacity)
+    {
+        float pulseSpeed = 2f * (float)amount / time;
+        float t = -1f;
+        for(int i = 0; i < amount; i++)
+        {
+            while(t <= 1f)
+            {
+                Color newColor = player.sprite.color;
+                newColor.a = Mathf.Lerp(opacity, 1f, pulseOpacityCurve.Evaluate(Mathf.Abs(t)));
+                player.sprite.color = newColor;
+                
+                yield return null;
+                t += pulseSpeed * Time.deltaTime;
+            }
+            t -= 2f;
+        }
+        Color newCol = player.sprite.color;
+        newCol.a = 1f;
+        player.sprite.color = newCol;
     }
 }

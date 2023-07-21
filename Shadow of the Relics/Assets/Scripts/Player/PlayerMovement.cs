@@ -8,19 +8,22 @@ public class PlayerMovement : PlayerBehaviour
     public Rigidbody2D rb;
     public Camera cam;
 
-    public float speed, accel, airAccel, jumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown;
+    public float speed, accel, airAccel, jumpHeight, airJumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
+    public Vector2 damageKnockback;
     public int airJumps, wallJumps;
-    public Vector2 WallCheckPoint, WallCheckSize, WallJumpForce;
+    public Vector2 WallCheckPoint, WallCheckSize, WallJumpDistance;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
-    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel, maxPerchTime;
+    public float grappleCastSpeed, grappleStartSpeed, grappleMinSpeed, grappleAccel, grappleDecel, maxPerchTime, minGrappleInputDistance;
+    public Vector2 grapplePerchOffset;
     public LineRenderer grapple;
     public int airGrapples, airDashes;
     public float DashDist, DashCooldown, DashStartSpeed, DashEndSpeed;
     public float groundCheckCooldown;
     public Vector2 groundCheckOffset, groundCheckSize;
     public LayerMask groundMask, wallMask;
+    public AudioPlayer RunAudio, GrappleHitAudio;
 
-    [HideInInspector] public bool isGrounded;
+    [HideInInspector] public bool isGrounded = true;
     [HideInInspector] public Vector2 velocity;
 
     Transform groundTrans;
@@ -45,9 +48,22 @@ public class PlayerMovement : PlayerBehaviour
         directionY = ctx.ReadValue<float>();
     }
 
+    bool isJumping;
     public void JumpInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || jumpCooldown > 0f)
+        if(ctx.performed)
+            return;
+        if(!ctx.started)
+        {
+            if(isJumping)
+            {
+                isJumping = false;
+                if(jumpCooldown <= 0f)
+                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(Mathf.Sqrt(jumpGravity), rb.velocity.y));
+            }
+            return;
+        }
+        if(jumpCooldown > 0f || paralyzed > 0f || Time.timeScale == 0f)
             return;
         if(grappling)
         {
@@ -58,7 +74,7 @@ public class PlayerMovement : PlayerBehaviour
         }
         if(onWall != 0 && wallJump != wallJumps)
         {
-            rb.velocity = new Vector2((float)onWall * WallJumpForce.x, WallJumpForce.y);
+            rb.velocity = new Vector2((float)onWall * -Mathf.Sqrt(2f * airAccel * WallJumpDistance.x), Mathf.Sqrt(2f * jumpGravity * WallJumpDistance.y));
             wallJumpStopMove = WallJumpStopMoveTime;
             wallJump++;
             return;
@@ -68,10 +84,13 @@ public class PlayerMovement : PlayerBehaviour
             if(velocity.y > 0f || airJump == airJumps)
                 return;
             airJump++;
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * airJumpHeight), 0f);
+            return;
         }
+        isJumping = true;
+        jumpCooldown = JumpCooldown;
         rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
         groundCooldown = groundCheckCooldown;
-        jumpCooldown = JumpCooldown;
         isGrounded = false;
     }
 
@@ -79,7 +98,7 @@ public class PlayerMovement : PlayerBehaviour
     Vector2 dashVel, dashDir, dashDrag;
     public void DashInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started)
+        if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
             return;
 
         if(!dashing && dashCooldown <= 0f)
@@ -102,10 +121,10 @@ public class PlayerMovement : PlayerBehaviour
 
     bool grappling, grappleAcceling;
     float grapplingSpeed, grappleCast;
-    GrapplePoint grapplePoint;
+    GrapplePoint grapplePoint, targettingPoint;
     public void GrappleInput(InputAction.CallbackContext ctx)
     {
-        if(!ctx.started || grapples == airGrapples)
+        if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
             return;
 
         if(grappling)
@@ -113,26 +132,46 @@ public class PlayerMovement : PlayerBehaviour
             CancelGrapple();
             return;
         }
-
-        float sqrDist = Mathf.Infinity;
-        grapplePoint = null;
-        Vector3 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        foreach(GrapplePoint p in GrapplePoint.Points)
-        {
-            float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
-            if(newSqrDist < sqrDist)
-            {
-                grapplePoint = p;
-                sqrDist = newSqrDist;
-            }
-        }
-
-        if(grapplePoint == null)
+        if(grapples == airGrapples)
             return;
+
+        if(targettingPoint == null)
+            return;
+        grapplePoint = targettingPoint;
 
         grappling = true;
         grapple.gameObject.SetActive(true);
+        player.animator.Play(player.animator.grappleAnim);
+        GrappleHitAudio.Play();
         grappleCast = 0f;
+    }
+
+    void FindClosestGrapplePoint()
+    {
+        GrapplePoint newPoint = null;
+        if(grapples != airGrapples)
+        {
+            float sqrDist = minGrappleInputDistance * minGrappleInputDistance;
+            Vector2 cursorPosition = cam.ScreenToWorldPoint(Input.mousePosition);
+            foreach(GrapplePoint p in GrapplePoint.Points)
+            {
+                float newSqrDist = Vector2.SqrMagnitude(cursorPosition - p.position);
+                if(newSqrDist < sqrDist && !Physics2D.Linecast(transform.position, p.position, groundMask | wallMask))
+                {
+                    newPoint = p;
+                    sqrDist = newSqrDist;
+                }
+            }
+        }
+
+        if(targettingPoint != newPoint)
+        {
+            if(targettingPoint != null)
+                targettingPoint.SetSprite(0);
+            targettingPoint = newPoint;
+            if(newPoint != null)
+                newPoint.SetSprite(1);
+        }
     }
 
     void CancelGrapple()
@@ -141,9 +180,21 @@ public class PlayerMovement : PlayerBehaviour
         grapplePoint = null;
         grappleCast = 0f;
         grapple.gameObject.SetActive(false);
+        player.animator.Stop();
         player.animator.SetRotate(Vector2.zero);
         if(direction != 0f)
             activeDir = direction;
+    }
+
+    float paralyzed;
+    public override void TakeDamage(float damage, Vector2 origin)
+    {
+        Vector2 knockback = damageKnockback;
+        knockback.x *= (onWall == 0f?Mathf.Sign(transform.position.x - origin.x):-onWall);
+        paralyzed = damageParalyzedTime;
+        if(grappling)
+            CancelGrapple();
+        rb.velocity = knockback;
     }
 
     void FixedUpdate()
@@ -157,8 +208,17 @@ public class PlayerMovement : PlayerBehaviour
         WallJump();
         Dash();
 
+        if(isGrounded && velocity.x != 0f)
+            RunAudio.Play();
+
         if(jumpCooldown > 0f)
+        {
             jumpCooldown -= Time.fixedDeltaTime;
+            if(jumpCooldown <= 0f && !isJumping)
+                velocity = new Vector2(rb.velocity.x, Mathf.Min(Mathf.Sqrt(jumpGravity), velocity.y));
+        }
+        if(paralyzed > 0f)
+            paralyzed -= Time.fixedDeltaTime;
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;
@@ -166,6 +226,7 @@ public class PlayerMovement : PlayerBehaviour
 
     void Update()
     {
+        FindClosestGrapplePoint();
         if(grappling)
         {
             if(grappleCast != 1f)
@@ -173,7 +234,7 @@ public class PlayerMovement : PlayerBehaviour
                 grappleCast = Mathf.MoveTowards(grappleCast, 1f, grappleCastSpeed * Time.deltaTime);
                 if(grappleCast == 1f)
                 {
-                    grappleDist = (grapplePoint.position - transform.position).magnitude;
+                    grappleDist = (grapplePoint.position + grapplePerchOffset - player.position).magnitude;
                     grapplingSpeed = Mathf.Min(grappleStartSpeed, Mathf.Sqrt(grappleDist * 2f * grappleDecel));
                     grappleAcceling = grapplingSpeed == grappleStartSpeed;
                     grapples++;
@@ -209,22 +270,28 @@ public class PlayerMovement : PlayerBehaviour
         }
 
         if(grappling && grappleCast == 1f)
+        {
+            isGrounded = false;
             return;
+        }
 
         Collider2D newGround = Physics2D.OverlapBox((Vector2)transform.position + groundCheckOffset, groundCheckSize, 0f, groundMask);
         ChangeGround((newGround==null?null:newGround.transform));
         if(isGrounded != newGround)
         {
-            isGrounded = !isGrounded;
+            isGrounded = newGround;
             if(isGrounded)
             {
                 airJump = wallJump = airDash = grapples = 0;
+                RunAudio.Play();
             }
         }
     }
 
     void Move()
     {
+        if(paralyzed > 0f)
+            return;
         if(wallJumpStopMove > 0f)
         {
             wallJumpStopMove -= Time.fixedDeltaTime;
@@ -244,7 +311,19 @@ public class PlayerMovement : PlayerBehaviour
     {
         if(!isGrounded)
         {
-            velocity.y -= (velocity.y > 0f?jumpGravity:(directionY<0f?diveGravity:fallGravity)) * Time.fixedDeltaTime;
+            if(velocity.y > 0f)
+            {
+                // float grav = jumpGravity;
+                // if(isJumping)
+                //     grav = (jumpGravity * jumpHeight) / maxJumpHeight;
+                // velocity.y -= grav * Time.fixedDeltaTime;
+                velocity.y -= jumpGravity * Time.fixedDeltaTime;
+            }
+            else
+            {
+                velocity.y -= (directionY<0f?diveGravity:fallGravity) * Time.fixedDeltaTime;
+                isJumping = false;
+            }
         }
     }
 
@@ -256,21 +335,24 @@ public class PlayerMovement : PlayerBehaviour
         
         if(grapplePoint == null)
         {
-            grappling = false;
+            CancelGrapple();
             return;
         }
 
         if(grappleDist <= 0.01f)
         {
-            transform.position = (Vector2)grapplePoint.position;
+            transform.position = (Vector2)grapplePoint.position + grapplePerchOffset;
             velocity = Vector2.zero;
+            player.animator.SetRotate(Vector2.zero);
             perchTime += Time.fixedDeltaTime;
+            player.animator.Play(player.animator.perchAnim);
+            grapple.gameObject.SetActive(false);
             if(perchTime >= maxPerchTime)
                 CancelGrapple();
             return;
         }
 
-        Vector2 grappleVec = (grapplePoint.position - transform.position);
+        Vector2 grappleVec = (grapplePoint.position + grapplePerchOffset - player.position);
         grappleDist = grappleVec.magnitude;
 
         float accelingDist = grappleDist - grapplingSpeed * 0.5f * (grapplingSpeed / grappleDecel);
@@ -291,7 +373,7 @@ public class PlayerMovement : PlayerBehaviour
             activeDir = Mathf.Sign(velocity.x);
     }
 
-    int onWall;
+    [HideInInspector] public int onWall;
     void WallJump()
     {
         if(dashing || isGrounded || velocity.y > MinWallSpeed || directionY < 0f)

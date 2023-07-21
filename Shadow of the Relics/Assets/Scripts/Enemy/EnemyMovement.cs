@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyMovement : EnemyBehaviour
 {
-    public float chaseSpeed, nonAggroSpeed, jumpGravity, fallGravity, jumpDistance, minJumpHeight, jumpOvershootHeight, attackRadius;
+    public float chaseSpeed, nonAggroSpeed, jumpGravity, fallGravity, jumpDistance, minJumpHeight, jumpOvershootHeight, attackRadius, aggroWanderDist;
 
     float direction{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
@@ -49,7 +49,7 @@ public class EnemyMovement : EnemyBehaviour
             SetTargetPos();
             return true;
         }
-        pathLinks = PathManager.PathFind(currentPath, target, (enemy.aggro?enemy.Target.position:enemy.patrolPath.start));
+        pathLinks = PathManager.PathFind(currentPath, target, transform.position, (enemy.aggro?enemy.Target.position:enemy.patrolPath.start));
         SetTargetPos();
         return true;
     }
@@ -58,7 +58,13 @@ public class EnemyMovement : EnemyBehaviour
     {
         if(pathLinks.Count == 0)
         {
-            targetPos = PointOnPath(enemy.Target.lastSeenPosition, currentPath);
+            Vector2 pos = PointOnPath(enemy.Target.lastSeenPosition, currentPath);
+            if(targetPos == pos)
+            {
+                targetPos = PointOnPath(pos + Vector2.right * Random.Range(-aggroWanderDist, aggroWanderDist), currentPath);
+                return;
+            }
+            targetPos = pos;
             return;
         }
 
@@ -83,6 +89,10 @@ public class EnemyMovement : EnemyBehaviour
         {
             SetNextTarget();
             return;
+        }
+        if(Vector2.SqrMagnitude(enemy.Target.position - (Vector2)transform.position) < attackRadius * attackRadius)
+        {
+            SetTargetPos();
         }
 
         direction = Mathf.Sign(targetPos.x - transform.position.x);
@@ -137,5 +147,7 @@ public class EnemyMovement : EnemyBehaviour
         jumpVelocity.y -= (jumpVelocity.y > 0f?jumpGravity:fallGravity) * Time.deltaTime;
 
         jumpTime -= Time.deltaTime;
+        if(jumpTime <= 0f)
+            transform.position = PointOnPath(transform.position, currentPath);
     }
 }

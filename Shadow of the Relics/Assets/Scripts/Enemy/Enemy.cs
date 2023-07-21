@@ -6,15 +6,17 @@ public class Enemy : MonoBehaviour
 {
     public EnemyMovement movement;
     public EnemyVision vision;
+    public EnemyAttack attack;
     public EnemyPatrol patrol;
     public EnemyPatrolVision patrolVision;
+    public EnemyHitbox hitbox;
 
     public Vector2 eyePosition;
     public float halfWidth;
 
     public Vector2 position{get=>transform.position;}
 
-    [HideInInspector] public bool aggro;
+    [HideInInspector] public bool aggro, seePlayer;
     [HideInInspector] public Path patrolPath;
     [HideInInspector] public Player Target;
 
@@ -24,8 +26,10 @@ public class Enemy : MonoBehaviour
     {
         movement.enemy = this;
         vision.enemy = this;
+        //attack.enemy = this;
         patrol.enemy = this;
         patrolVision.enemy = this;
+        hitbox.enemy = this;
 
         movement.enabled = false;
         vision.enabled = false;
@@ -33,7 +37,8 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        patrolPath = PathManager.ClosestPathTo(transform.position);
+        if(patrolPath == null)
+            patrolPath = PathManager.ClosestPathTo(transform.position);
     }
 
     void OnEnable()
@@ -72,7 +77,7 @@ public class Enemy : MonoBehaviour
         AllDetectPlayer(player);
     }
 
-    public void AllDetectPlayer(Player player)
+    public static void AllDetectPlayer(Player player)
     {
         player.Seen();
         foreach(Enemy enemy in ActiveEnemies)
@@ -84,12 +89,15 @@ public class Enemy : MonoBehaviour
     void DetectPlayer(Player player)
     {
         Target = player;
-        aggro = true;
-        patrolVision.gameObject.SetActive(false);
-        patrol.enabled = false;
-        movement.enabled = true;
-        vision.enabled = true;
-        movement.StartChase();
+        if(!aggro)
+        {
+            patrolVision.gameObject.SetActive(false);
+            patrol.enabled = false;
+            movement.enabled = true;
+            vision.enabled = true;
+            movement.StartChase();
+            aggro = true;
+        }
     }
 
     public void StopChase()
@@ -102,6 +110,7 @@ public class Enemy : MonoBehaviour
     {
         patrolVision.gameObject.SetActive(true);
         patrol.enabled = true;
+        patrol.StartPatrol();
         patrolVision.StartPatrol();
         movement.enabled = false;
         vision.enabled = false;
