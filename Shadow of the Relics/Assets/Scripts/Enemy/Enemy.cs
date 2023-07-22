@@ -8,8 +8,8 @@ public class Enemy : MonoBehaviour
     public EnemyVision vision;
     public EnemyAttack attack;
     public EnemyPatrol patrol;
-    public EnemyPatrolVision patrolVision;
     public EnemyHitbox hitbox;
+    public EnemyPatrolVision patrolVision;
 
     public Vector2 eyePosition;
     public float halfWidth;
@@ -26,13 +26,14 @@ public class Enemy : MonoBehaviour
     {
         movement.enemy = this;
         vision.enemy = this;
-        //attack.enemy = this;
+        attack.enemy = this;
         patrol.enemy = this;
-        patrolVision.enemy = this;
         hitbox.enemy = this;
+        patrolVision.enemy = this;
 
         movement.enabled = false;
         vision.enabled = false;
+        attack.enabled = false;
     }
 
     void Start()
@@ -79,7 +80,7 @@ public class Enemy : MonoBehaviour
 
     public static void AllDetectPlayer(Player player)
     {
-        player.Seen();
+        player.Detect();
         foreach(Enemy enemy in ActiveEnemies)
         {
             enemy.DetectPlayer(player);
@@ -95,8 +96,9 @@ public class Enemy : MonoBehaviour
             patrol.enabled = false;
             movement.enabled = true;
             vision.enabled = true;
-            movement.StartChase();
+            attack.enabled = true;
             aggro = true;
+            movement.StartChase();
         }
     }
 
@@ -114,6 +116,7 @@ public class Enemy : MonoBehaviour
         patrolVision.StartPatrol();
         movement.enabled = false;
         vision.enabled = false;
+        attack.enabled = false;
     }
 }
 

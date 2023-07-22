@@ -4,56 +4,65 @@ using UnityEngine;
 
 public class EnemyAttack : EnemyBehaviour
 {
-    public float Damage, Cooldown, GlobalCooldown, AttackDelay;
+    public float Cooldown, GlobalCooldown, StartCooldown, MinAttackDelay, MinAttackRadius, ProjectileRadius;
+    public Vector2 ProjectileSpawnOffset;
     public LayerMask ObstacleMask, PlayerMask;
-    public LineRenderer IndicatorLine, DamageLine;
 
-    static EnemyAttack current;
-    static float globalcooldown;
-    float cooldown;
+    static bool globalcooldown;
+    float cooldown, seePlayer;
+
+    void OnEnable()
+    {
+        if(globalcooldown)
+            print("global cooldown true");
+        
+        cooldown = StartCooldown;
+        seePlayer = 0f;
+    }
 
     void Update()
     {
-        if(current == this)
-            CurrentUpdate();
-
         if(cooldown > 0f)
         {
             cooldown -= Time.deltaTime;
             return;
         }
+
+        if(!enemy.aggro)
+            return;
+        
+        TargetVision();
+
+        if(globalcooldown || seePlayer < MinAttackDelay)
+            return;
+        if((enemy.Target.position - (enemy.position + ProjectileSpawnOffset)).sqrMagnitude < MinAttackRadius * MinAttackRadius)
+            return;
+        
+        SpawnProjectile();
+        StartCoroutine(SetGlobalCooldown());
+        cooldown = Cooldown;
     }
 
-    void CurrentUpdate()
+    void SpawnProjectile()
     {
-        if(globalcooldown > 0f)
-        {
-            globalcooldown -= Time.deltaTime;
-            if(globalcooldown <= 0f)
-            {
-                List<Enemy> EnemyAttackPool = new List<Enemy>();
-                foreach(Enemy nme in Enemy.ActiveEnemies)
-                {
-                    if(nme.seePlayer)
-                        EnemyAttackPool.Add(nme);
-                }
-                if(EnemyAttackPool.Count == 0)
-                {
-                    globalcooldown = GlobalCooldown;
-                    return;
-                }
-                int rand = Random.Range(0, EnemyAttackPool.Count);
-                current = EnemyAttackPool[rand].attack;
-            }
-            return;
-        }
+        Projectile projectile = ProjectilePool.GetItem();
 
-        if(!enemy.seePlayer)
-        {
-            globalcooldown = GlobalCooldown;
-            return;
-        }
+        Vector2 direction = enemy.Target.position - (enemy.position + ProjectileSpawnOffset);
 
+        projectile.Init(enemy.position + ProjectileSpawnOffset, direction.normalized);
+    }
 
+    IEnumerator SetGlobalCooldown()
+    {
+        globalcooldown = true;
+        yield return new WaitForSeconds(GlobalCooldown);
+        globalcooldown = false;
+    }
+
+    void TargetVision()
+    {
+        Vector2 dir = enemy.Target.position - (enemy.position + ProjectileSpawnOffset);
+        bool see = !Physics2D.CircleCast(enemy.position + ProjectileSpawnOffset, ProjectileRadius, dir, dir.magnitude, ObstacleMask);
+        seePlayer = (see?seePlayer + Time.deltaTime:0f);
     }
 }

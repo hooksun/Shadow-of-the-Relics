@@ -10,6 +10,12 @@ public class CameraRig : MonoBehaviour
 
     CameraRoom current;
 
+    void Start()
+    {
+        current = FindTargetRoom();
+        transform.position = GetCameraPosition();
+    }
+
     CameraRoom FindTargetRoom()
     {
         foreach(CameraRoom room in CameraRoom.Rooms)
@@ -29,14 +35,7 @@ public class CameraRig : MonoBehaviour
             current = FindTargetRoom();
         }
 
-        Vector3 newPos = Target.transform.position + Vector3.forward * transform.position.z;
-        if(current != null)
-        {
-            Vector2 targetUV = current.UV(Target.transform.position);
-            Vector2 camLocalPosition = Vector2.Min(current.outerBounds, bounds)*0.5f + ((targetUV) * Vector2.Max(current.outerBounds-bounds, Vector2.zero));
-
-            newPos = (Vector3)((Vector2)current.outerPosition + camLocalPosition) + Vector3.forward * transform.position.z;
-        }
+        Vector3 newPos = GetCameraPosition();
 
         Vector2 transitionDir = (newPos - transform.position);
         if(transitionDir.sqrMagnitude > Target.velocity.sqrMagnitude * Time.deltaTime)
@@ -48,5 +47,18 @@ public class CameraRig : MonoBehaviour
         {
             transform.position = newPos;
         }
+    }
+
+    Vector3 GetCameraPosition()
+    {
+        Vector3 newPos = Target.transform.position + Vector3.forward * transform.position.z;
+        if(current != null)
+        {
+            Vector2 targetUV = current.UV(Target.transform.position);
+            Vector2 camLocalPosition = Vector2.Min(current.outerBounds, bounds)*0.5f + ((targetUV) * Vector2.Max(current.outerBounds-bounds, Vector2.zero));
+
+            newPos = (Vector3)((Vector2)current.outerPosition + camLocalPosition) + Vector3.forward * transform.position.z;
+        }
+        return newPos;
     }
 }

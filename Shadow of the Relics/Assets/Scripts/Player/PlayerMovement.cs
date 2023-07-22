@@ -8,7 +8,7 @@ public class PlayerMovement : PlayerBehaviour
     public Rigidbody2D rb;
     public Camera cam;
 
-    public float speed, accel, airAccel, jumpHeight, airJumpHeight, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
+    public float speed, accel, airAccel, jumpHeight, airJumpHeight, coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
     public Vector2 damageKnockback;
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpDistance;
@@ -31,7 +31,7 @@ public class PlayerMovement : PlayerBehaviour
 
     Vector2 groundVelocity;
     
-    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove, perchTime;
+    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove, perchTime, coyote;
     int airJump, wallJump, airDash, grapples;
 
     float activeDir{get=>(player.sprite.flipX?-1f:1f); set=>player.sprite.flipX = (value < 0f);}
@@ -79,7 +79,7 @@ public class PlayerMovement : PlayerBehaviour
             wallJump++;
             return;
         }
-        if(!isGrounded)
+        if(!isGrounded && coyote <= 0f)
         {
             if(velocity.y > 0f || airJump == airJumps)
                 return;
@@ -285,6 +285,10 @@ public class PlayerMovement : PlayerBehaviour
                 airJump = wallJump = airDash = grapples = 0;
                 RunAudio.Play();
             }
+            else
+            {
+                coyote = coyoteTime;
+            }
         }
     }
 
@@ -311,6 +315,8 @@ public class PlayerMovement : PlayerBehaviour
     {
         if(!isGrounded)
         {
+            if(coyote > 0f)
+                coyote -= Time.fixedDeltaTime;
             if(velocity.y > 0f)
             {
                 // float grav = jumpGravity;

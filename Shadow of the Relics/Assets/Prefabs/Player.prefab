@@ -641,6 +641,7 @@ MonoBehaviour:
   airAccel: 100
   jumpHeight: 7
   airJumpHeight: 5
+  coyoteTime: 0.1
   jumpGravity: 100
   fallGravity: 80
   diveGravity: 120

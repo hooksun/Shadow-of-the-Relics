@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public Vector2 position{get=>transform.position;}
     public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
     [HideInInspector] public Vector2 latePosition, lastSeenPosition;
+    public bool CantGetDamaged{get=>damaged > 0f;}
 
     void Awake()
     {
@@ -37,7 +38,7 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage, Vector2 origin)
     {
-        if(damaged > 0f)
+        if(CantGetDamaged)
             return;
         
         damaged = damageCooldown;
@@ -63,6 +64,12 @@ public class Player : MonoBehaviour
     {
         detectTime = stopDetectTime;
         StartCoroutine(SetSeenPosition(position));
+    }
+
+    public void Detect()
+    {
+        lastSeenPosition = position;
+        Seen();
     }
 }
 

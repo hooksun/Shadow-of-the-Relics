@@ -54,9 +54,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 5
-  MaxDistance: 20
+  MaxDistance: 15
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -64,23 +64,32 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
+      time: 0.33333334
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -3.0011995
+      outSlope: -3.0011995
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.6666667
+      value: 0.5
+      inSlope: -0.7502999
+      outSlope: -0.7502999
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
+      value: 0.14072165
+      inSlope: -0.33346638
+      outSlope: -0.33346638
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -377,6 +386,7 @@ GameObject:
   - component: {fileID: 7647600317703604427}
   - component: {fileID: 2871408375416692618}
   - component: {fileID: 25332452979163058}
+  - component: {fileID: 6540452889534814006}
   - component: {fileID: 326917233320562697}
   - component: {fileID: 850112976229304758}
   m_Layer: 8
@@ -419,10 +429,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 2871408375416692618}
   vision: {fileID: 25332452979163058}
-  attack: {fileID: 0}
+  attack: {fileID: 6540452889534814006}
   patrol: {fileID: 326917233320562697}
-  patrolVision: {fileID: 5441748210477594887}
   hitbox: {fileID: 850112976229304758}
+  patrolVision: {fileID: 5441748210477594887}
   eyePosition: {x: 0, y: 0.75}
   halfWidth: 0.75
   aggro: 0
@@ -471,6 +481,32 @@ MonoBehaviour:
   PlayerMask:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &6540452889534814006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7189550665637505122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 682d631e144067a4abd6803741a04b2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy: {fileID: 0}
+  Cooldown: 2
+  GlobalCooldown: 0.5
+  StartCooldown: 1
+  MinAttackDelay: 0.2
+  MinAttackRadius: 6
+  ProjectileRadius: 0.5
+  ProjectileSpawnOffset: {x: 0, y: 1}
+  ObstacleMask:
+    serializedVersion: 2
+    m_Bits: 8
+  PlayerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &326917233320562697
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,13 +7,13 @@ public class CameraRoom : MonoBehaviour
 {
     public static List<CameraRoom> Rooms = new List<CameraRoom>();
 
-    public Vector2 bounds, TRborder, BLborder;
+    public Vector2Int bounds, TRborder, BLborder;
 
     public Vector2 outerBounds{get=>bounds + BLborder + TRborder;}
     public Vector2 boundPosition{get=>transform.position;}
     public Vector2 outerPosition{get=>boundPosition - BLborder;}
 
-    void Start()
+    void Awake()
     {
         Rooms.Add(this);
     }
@@ -45,7 +45,7 @@ public class CameraRoom : MonoBehaviour
         Gizmos.color = new Color(1f, 1f, 0f, 0.05f);
         Gizmos.DrawCube(outerPosition + outerBounds * 0.5f, outerBounds);
         Gizmos.color = new Color(1f, 0f, 0f, 0.15f);
-        Gizmos.DrawCube(boundPosition + bounds * 0.5f, bounds);
+        Gizmos.DrawCube(boundPosition + (Vector2)bounds * 0.5f, (Vector2)bounds);
     }
 
     void OnDrawGizmosSelected()
@@ -53,7 +53,7 @@ public class CameraRoom : MonoBehaviour
         Gizmos.color = new Color(1f, 1f, 0f, 0.1f);
         Gizmos.DrawCube(outerPosition + outerBounds * 0.5f, outerBounds);
         Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-        Gizmos.DrawCube(boundPosition + bounds * 0.5f, bounds);
+        Gizmos.DrawCube(boundPosition + (Vector2)bounds * 0.5f, (Vector2)bounds);
     }
 #endif
 }
