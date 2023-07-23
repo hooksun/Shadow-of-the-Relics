@@ -7,9 +7,11 @@ public class AudioPlayer : MonoBehaviour
     static List<AudioPlayer> ActiveAudios = new List<AudioPlayer>();
 
     public AudioSource source;
-    public float minPitch, maxPitch, length;
+    public float minPitch, maxPitch, volume, length;
 
     bool playing, onCooldown;
+
+    static float globalVolume;
 
     void OnEnable()
     {
@@ -50,9 +52,16 @@ public class AudioPlayer : MonoBehaviour
         source.Play();
     }
 
-    public void SetVolume()
+    public static void SetGlobalVolume(float volume)
     {
+        globalVolume = volume;
+        foreach(AudioPlayer player in ActiveAudios)
+            player.SetVolume(volume);
+    }
 
+    void SetVolume(float volume)
+    {
+        source.volume = this.volume * volume;
     }
 
     public static void PauseAll(bool pause)

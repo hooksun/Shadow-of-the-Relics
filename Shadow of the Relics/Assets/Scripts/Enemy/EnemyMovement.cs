@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyMovement : EnemyBehaviour
 {
     public float chaseSpeed, nonAggroSpeed, jumpGravity, fallGravity, jumpDistance, minJumpHeight, jumpOvershootHeight, attackRadius, aggroWanderDist;
+    public AudioPlayer RunAudio;
 
     float direction{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
@@ -97,6 +98,8 @@ public class EnemyMovement : EnemyBehaviour
 
         direction = Mathf.Sign(targetPos.x - transform.position.x);
         transform.position = Vector2.MoveTowards(transform.position, targetPos, (enemy.aggro?chaseSpeed:nonAggroSpeed) * Time.deltaTime);
+        enemy.animator.Play(enemy.animator.runAnim);
+        RunAudio.Play();
     }
 
     void SetNextTarget()
@@ -144,7 +147,9 @@ public class EnemyMovement : EnemyBehaviour
     {
         transform.position += (Vector3)jumpVelocity * Time.deltaTime;
 
-        jumpVelocity.y -= (jumpVelocity.y > 0f?jumpGravity:fallGravity) * Time.deltaTime;
+        bool jump = jumpVelocity.y > 0f;
+        jumpVelocity.y -= (jump?jumpGravity:fallGravity) * Time.deltaTime;
+        enemy.animator.Play(jump?enemy.animator.jumpAnim:enemy.animator.fallAnim);
 
         jumpTime -= Time.deltaTime;
         if(jumpTime <= 0f)

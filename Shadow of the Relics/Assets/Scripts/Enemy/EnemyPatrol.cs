@@ -31,6 +31,7 @@ public class EnemyPatrol : EnemyBehaviour
         if(turnCooldown > 0f)
         {
             turnCooldown -= Time.deltaTime;
+            enemy.animator.Play(enemy.animator.idleAnim);
             if(turnCooldown <= 0f)
             {
                 direction *= -1f;
@@ -40,6 +41,7 @@ public class EnemyPatrol : EnemyBehaviour
 
         transform.position += Vector3.right * direction * patrolSpeed * Time.deltaTime;
         footstepAudio.Play();
+        enemy.animator.Play(enemy.animator.patrolAnim);
 
         if(Turn())
         {

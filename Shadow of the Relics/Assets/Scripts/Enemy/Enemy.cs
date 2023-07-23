@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     public EnemyAttack attack;
     public EnemyPatrol patrol;
     public EnemyHitbox hitbox;
+    public EnemyAnimator animator;
     public EnemyPatrolVision patrolVision;
 
     public Vector2 eyePosition;
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
         attack.enemy = this;
         patrol.enemy = this;
         hitbox.enemy = this;
+        animator.enemy = this;
         patrolVision.enemy = this;
 
         movement.enabled = false;

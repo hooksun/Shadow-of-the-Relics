@@ -38,6 +38,7 @@ public class EnemyPatrolVision : EnemyBehaviour
         sprite.color = DetectedColor;
         detected = true;
         enemy.patrol.enabled = false;
+        enemy.animator.Play(enemy.animator.noticeAnim);
     }
 
     public void StartPatrol()

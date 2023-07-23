@@ -9,22 +9,26 @@ public class GameplayMusic : MonoBehaviour
     public AudioSource stealth, detect;
     public float detectTranstitionTime, stealthTransitionTime;
 
-    float transition, startVolume;
+    float transition, volume = 1f, stealthVolume, detectVolume;
     bool detected;
+
+    float startVolume{get=>(detected?stealthVolume:detectVolume) * volume;}
 
     void Start()
     {
         this.enabled = false;
+        stealthVolume = stealth.volume;
+        detectVolume = detect.volume;
         stealth.Play();
     }
 
     public static void SwitchMusic(bool detected) => instance.Switch(detected);
     public static void PauseMusic(bool pause) => instance.Pause(pause);
+    public static void SetMusicVolume(float volume) => instance.SetVolume(volume);
 
     void Switch(bool detected)
     {
         this.detected = detected;
-        startVolume = (detected?stealth.volume:detect.volume);
         transition = 0f;
         this.enabled = true;
     }
@@ -44,6 +48,13 @@ public class GameplayMusic : MonoBehaviour
             else
                 source.UnPause();
         }
+    }
+
+    void SetVolume(float volume)
+    {
+        this.volume = volume;
+        stealth.volume = stealthVolume * volume;
+        detect.volume = detectVolume * volume;
     }
 
     void Update()
