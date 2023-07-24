@@ -7,6 +7,7 @@ public class Artifact : MonoBehaviour
     public Vector2 startVelocity;
     public float gravity, freeFallTime, targettingTime, minScale;
     public bool detectPlayer;
+    public AudioPlayer collectedAudio;
 
     public static int collectedArtifacts;
 
@@ -55,6 +56,7 @@ public class Artifact : MonoBehaviour
         this.enabled = true;
         velocity = startVelocity;
         time = -freeFallTime;
+        collectedAudio.Play();
         collectedArtifacts++;
 
         if(detectPlayer)

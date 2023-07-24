@@ -54,7 +54,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 5
-  MaxDistance: 35
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -66,20 +66,29 @@ AudioSource:
     - serializedVersion: 3
       time: 0.25
       value: 1
-      inSlope: -0.08934873
-      outSlope: -0.08934873
+      inSlope: -0.09540872
+      outSlope: -0.09540872
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.28336236
+      outWeight: 0.31622648
+    - serializedVersion: 3
+      time: 0.826875
+      value: 0.83697206
+      inSlope: -1.107878
+      outSlope: -1.107878
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: -4.1250377
-      outSlope: -4.1250377
+      inSlope: -9.391836
+      outSlope: -9.391836
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.07360061
+      inWeight: 0.1342515
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -144,6 +153,7 @@ MonoBehaviour:
   source: {fileID: 3838497399900789809}
   minPitch: 0.6
   maxPitch: 0.7
+  volume: 0
   length: 0.25
 --- !u!1 &2084825751581212517
 GameObject:
@@ -199,7 +209,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 5
-  MaxDistance: 35
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -211,20 +221,29 @@ AudioSource:
     - serializedVersion: 3
       time: 0.25
       value: 1
-      inSlope: -0.08934873
-      outSlope: -0.08934873
+      inSlope: -0.09540872
+      outSlope: -0.09540872
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.28336236
+      outWeight: 0.31622648
+    - serializedVersion: 3
+      time: 0.826875
+      value: 0.83697206
+      inSlope: -1.107878
+      outSlope: -1.107878
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: -4.1250377
-      outSlope: -4.1250377
+      inSlope: -9.391836
+      outSlope: -9.391836
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.07360061
+      inWeight: 0.1342515
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -289,6 +308,7 @@ MonoBehaviour:
   source: {fileID: 6861628137717493750}
   minPitch: 0.5
   maxPitch: 0.6
+  volume: 0
   length: 0.5
 --- !u!1 &2486496004703544481
 GameObject:

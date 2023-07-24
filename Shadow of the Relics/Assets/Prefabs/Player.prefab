@@ -504,6 +504,7 @@ MonoBehaviour:
   source: {fileID: 566008020950681680}
   minPitch: 0.8
   maxPitch: 1.3
+  volume: 0
   length: 0.25
 --- !u!1 &8140670639167282237
 GameObject:
@@ -521,6 +522,7 @@ GameObject:
   - component: {fileID: 8244692190373936788}
   - component: {fileID: 235967847613490792}
   - component: {fileID: 5136139121371294653}
+  - component: {fileID: 7556555392347714189}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -873,6 +875,14 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
+--- !u!81 &7556555392347714189
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8140670639167282237}
+  m_Enabled: 1
 --- !u!1 &8582692916276576769
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,4 +1027,5 @@ MonoBehaviour:
   source: {fileID: 2302060296486730513}
   minPitch: 1
   maxPitch: 1
+  volume: 0
   length: 0
