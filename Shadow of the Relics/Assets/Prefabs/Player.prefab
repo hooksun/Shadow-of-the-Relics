@@ -108,7 +108,7 @@ MonoBehaviour:
   wallAnim: PlayerWall
   grappleAnim: PlayerGrappling
   perchAnim: PlayerPerch
-  damagedAnim: 
+  damagedAnim: PlayerDamage
   rotateSpeed: 450
   damagedOpacity: 0.6
   pulseOpacityCurve:
@@ -224,6 +224,152 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.6, y: 1.4}
   m_Direction: 0
+--- !u!1 &4387031975691774047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4542004758397529663}
+  - component: {fileID: 5929656359847060620}
+  - component: {fileID: 1490430601110281408}
+  m_Layer: 6
+  m_Name: Damaged Audio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4542004758397529663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387031975691774047}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 331448260296037879}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &5929656359847060620
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387031975691774047}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 482a9ce99502aee4da019a80237a76c1, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1490430601110281408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387031975691774047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2ba5d428ce9804b9824424e8c02383, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 5929656359847060620}
+  minPitch: 1
+  maxPitch: 1
+  volume: 0.5
+  length: 0
 --- !u!1 &7491474997935922563
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,7 +650,7 @@ MonoBehaviour:
   source: {fileID: 566008020950681680}
   minPitch: 0.8
   maxPitch: 1.3
-  volume: 0
+  volume: 0.3
   length: 0.25
 --- !u!1 &8140670639167282237
 GameObject:
@@ -545,6 +691,7 @@ Transform:
   - {fileID: 6396114913327086859}
   - {fileID: 2273405959231511491}
   - {fileID: 1762913984480890575}
+  - {fileID: 4542004758397529663}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -648,7 +795,7 @@ MonoBehaviour:
   fallGravity: 80
   diveGravity: 120
   JumpCooldown: 0.1
-  damageParalyzedTime: 0.4
+  damageParalyzedTime: 0.3
   damageKnockback: {x: 15, y: 18}
   airJumps: 1
   wallJumps: -1
@@ -701,6 +848,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   maxHealth: 100
+  damagedAudio: {fileID: 1490430601110281408}
 --- !u!50 &8244692190373936788
 Rigidbody2D:
   serializedVersion: 4
@@ -1027,5 +1175,5 @@ MonoBehaviour:
   source: {fileID: 2302060296486730513}
   minPitch: 1
   maxPitch: 1
-  volume: 0
+  volume: 0.8
   length: 0

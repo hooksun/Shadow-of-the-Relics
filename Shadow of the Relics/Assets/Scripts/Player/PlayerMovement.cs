@@ -39,7 +39,7 @@ public class PlayerMovement : PlayerBehaviour
     public void ChangeDirection(InputAction.CallbackContext ctx)
     {
         direction = ctx.ReadValue<float>();
-        if(direction != 0)
+        if(paralyzed <= 0f && direction != 0)
             activeDir = direction;
     }
 
@@ -190,11 +190,14 @@ public class PlayerMovement : PlayerBehaviour
     public override void TakeDamage(float damage, Vector2 origin)
     {
         Vector2 knockback = damageKnockback;
-        knockback.x *= (onWall == 0f?Mathf.Sign(transform.position.x - origin.x):-onWall);
+        float damagedDir = (onWall == 0f?Mathf.Sign(transform.position.x - origin.x):-onWall);
+        knockback.x *= damagedDir;
         paralyzed = damageParalyzedTime;
+        activeDir = -damagedDir;
         if(grappling)
             CancelGrapple();
         rb.velocity = knockback;
+        player.animator.Play(player.animator.damagedAnim);
     }
 
     void FixedUpdate()
@@ -218,7 +221,15 @@ public class PlayerMovement : PlayerBehaviour
                 velocity = new Vector2(rb.velocity.x, Mathf.Min(Mathf.Sqrt(jumpGravity), velocity.y));
         }
         if(paralyzed > 0f)
+        {
             paralyzed -= Time.fixedDeltaTime;
+            if(paralyzed <= 0f)
+            {
+                player.animator.Stop();
+                if(direction != 0)
+                    activeDir = direction;
+            }
+        }
         
         groundVelocity = (currentGround == null?Vector2.zero:currentGround.velocity);
         rb.velocity = velocity + groundVelocity;

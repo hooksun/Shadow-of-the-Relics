@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerHealth : PlayerBehaviour
 {
     public float maxHealth;
+    public AudioPlayer damagedAudio;
 
     float health;
 
@@ -16,6 +17,7 @@ public class PlayerHealth : PlayerBehaviour
     public override void TakeDamage(float damage, Vector2 origin)
     {
         health -= damage;
+        damagedAudio.Play();
         if(health <= 0f)
         {
             //ded
