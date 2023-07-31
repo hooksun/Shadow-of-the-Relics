@@ -126,3 +126,9 @@ public abstract class EnemyBehaviour : MonoBehaviour
 {
     [HideInInspector] public Enemy enemy;
 }
+
+public struct EnemySave
+{
+    public Vector2 position;
+    public bool aggro;
+}

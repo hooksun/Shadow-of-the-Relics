@@ -23,4 +23,11 @@ public class PlayerHealth : PlayerBehaviour
             //ded
         }
     }
+
+    public void SetHealth(float newHealth)
+    {
+        health = newHealth;
+    }
+
+    public float GetHealth() => health;
 }

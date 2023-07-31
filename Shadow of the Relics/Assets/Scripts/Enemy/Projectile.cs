@@ -40,10 +40,12 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, radius, HitMask);
+        Vector2 posDelta = direction * speed * Time.deltaTime;
+        float dist = posDelta.magnitude;
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, radius, posDelta, dist, HitMask);
         if(hit)
         {
-            Player player = hit.GetComponentInParent<Player>();
+            Player player = hit.transform.GetComponentInParent<Player>();
             if(!player.CantGetDamaged)
             {
                 player.TakeDamage(damage, player.position - direction);
@@ -52,7 +54,7 @@ public class Projectile : MonoBehaviour
             }
         }
 
-        hit = Physics2D.OverlapCircle(transform.position, radius, ObstacleMask);
+        hit = Physics2D.CircleCast(transform.position, radius, posDelta, dist, ObstacleMask);
         if(hit)
         {
             stuck = true;
@@ -60,7 +62,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        transform.position += (Vector3)direction * speed * Time.deltaTime;
+        transform.position += (Vector3)posDelta;
         transform.Rotate(Vector3.forward * rotateSpeed * Time.deltaTime);
     }
 

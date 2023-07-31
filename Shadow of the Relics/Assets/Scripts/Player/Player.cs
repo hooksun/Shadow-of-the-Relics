@@ -22,6 +22,9 @@ public class Player : MonoBehaviour
         movement.player = this;
         animator.player = this;
         health.player = this;
+
+        SaveManager.OnLoad += OnLoad;
+        SaveManager.OnSave += OnSave;
     }
 
     float detectTime, damaged;
@@ -45,6 +48,18 @@ public class Player : MonoBehaviour
         movement.TakeDamage(damage, origin);
         animator.TakeDamage(damage, origin);
         health.TakeDamage(damage, origin);
+    }
+
+    void OnLoad()
+    {
+        transform.position = SaveManager.saver.playerSave.position;
+        health.SetHealth(SaveManager.saver.playerSave.health);
+    }
+
+    void OnSave()
+    {
+        SaveManager.saver.playerSave.position = transform.position;
+        SaveManager.saver.playerSave.health = health.GetHealth();
     }
 
     IEnumerator SetLatePosition(Vector2 pos)
@@ -78,4 +93,10 @@ public abstract class PlayerBehaviour : MonoBehaviour
     [HideInInspector] public Player player;
 
     public virtual void TakeDamage(float damage, Vector2 origin){}
+}
+
+public struct PlayerSave
+{
+    public Vector2 position;
+    public float health;
 }
