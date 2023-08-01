@@ -28,14 +28,20 @@ public class AudioPlayer : MonoBehaviour
         if(onCooldown)
             return;
 
-        //playing = true;
         PlayAudio();
-        StartCoroutine(Cooldown(length));
+        if(length > 0f)
+            StartCoroutine(Cooldown(length));
     }
 
     public void Stop()
     {
-        //playing = false;
+        if(source.isPlaying)
+            source.Stop();
+        if(onCooldown)
+        {
+            StopCoroutine(Cooldown(length));
+            onCooldown = false;
+        }
     }
 
     IEnumerator Cooldown(float time)

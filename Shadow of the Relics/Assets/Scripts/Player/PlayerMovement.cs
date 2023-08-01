@@ -21,7 +21,7 @@ public class PlayerMovement : PlayerBehaviour
     public float groundCheckCooldown;
     public Vector2 groundCheckOffset, groundCheckSize;
     public LayerMask groundMask, wallMask;
-    public AudioPlayer RunAudio, GrappleHitAudio;
+    public AudioPlayer RunAudio, GrappleHitAudio, WallSlideAudio, JumpAudio;
 
     [HideInInspector] public bool isGrounded = true;
     [HideInInspector] public Vector2 velocity;
@@ -77,6 +77,7 @@ public class PlayerMovement : PlayerBehaviour
             rb.velocity = new Vector2((float)onWall * -Mathf.Sqrt(2f * airAccel * WallJumpDistance.x), Mathf.Sqrt(2f * jumpGravity * WallJumpDistance.y));
             wallJumpStopMove = WallJumpStopMoveTime;
             wallJump++;
+            JumpAudio.Play();
             return;
         }
         if(!isGrounded && coyote <= 0f)
@@ -85,6 +86,7 @@ public class PlayerMovement : PlayerBehaviour
                 return;
             airJump++;
             rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * airJumpHeight), 0f);
+            JumpAudio.Play();
             return;
         }
         isJumping = true;
@@ -92,6 +94,7 @@ public class PlayerMovement : PlayerBehaviour
         rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * jumpHeight), 0f);
         groundCooldown = groundCheckCooldown;
         isGrounded = false;
+        JumpAudio.Play();
     }
 
     bool dashing;
@@ -396,6 +399,7 @@ public class PlayerMovement : PlayerBehaviour
         if(dashing || isGrounded || velocity.y > MinWallSpeed || directionY < 0f)
         {
             onWall = 0;
+            WallSlideAudio.Stop();
             return;
         }
         
@@ -408,9 +412,11 @@ public class PlayerMovement : PlayerBehaviour
 
         if(onWall != 0)
         {
+            WallSlideAudio.Play();
             velocity.y = WallSlideSpeed;
             return;
         }
+        WallSlideAudio.Stop();
     }
 
     int HitWall(out Collider2D hit)

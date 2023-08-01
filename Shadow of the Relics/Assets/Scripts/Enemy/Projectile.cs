@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     public SpriteRenderer Renderer;
     public float speed, rotateSpeed, radius, damage, despawnTime, fadeTime;
     public LayerMask ObstacleMask, HitMask;
+    public AudioPlayer StuckAudio;
 
     Vector2 direction;
     float despawn;
@@ -48,7 +49,7 @@ public class Projectile : MonoBehaviour
             Player player = hit.transform.GetComponentInParent<Player>();
             if(!player.CantGetDamaged)
             {
-                player.TakeDamage(damage, player.position - direction);
+                player.TakeDamage(damage, player.position - direction, true);
                 gameObject.SetActive(false);
                 return;
             }
@@ -59,6 +60,7 @@ public class Projectile : MonoBehaviour
         {
             stuck = true;
             despawn = despawnTime;
+            StuckAudio.Play();
             return;
         }
 

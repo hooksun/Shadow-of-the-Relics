@@ -7,6 +7,7 @@ public class EnemyAttack : EnemyBehaviour
     public float Cooldown, GlobalCooldown, StartCooldown, MinAttackDelay, MinAttackRadius, ProjectileRadius;
     public Vector2 ProjectileSpawnOffset;
     public LayerMask ObstacleMask, PlayerMask;
+    public AudioPlayer ProjectileAudio;
 
     static bool globalcooldown;
     float cooldown, seePlayer;
@@ -50,6 +51,7 @@ public class EnemyAttack : EnemyBehaviour
         Vector2 direction = enemy.Target.position - (enemy.position + ProjectileSpawnOffset);
 
         projectile.Init(enemy.position + ProjectileSpawnOffset, direction.normalized);
+        ProjectileAudio.Play();
     }
 
     IEnumerator SetGlobalCooldown()

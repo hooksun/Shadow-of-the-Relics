@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public Animator Anim;
 
     public float detectCooldown, stopDetectTime, latePositionTime, damageCooldown;
+    public AudioPlayer RangeHitAudio;
 
     public Vector2 position{get=>transform.position;}
     public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
@@ -39,10 +40,12 @@ public class Player : MonoBehaviour
             damaged -= Time.fixedDeltaTime;
     }
 
-    public void TakeDamage(float damage, Vector2 origin)
+    public void TakeDamage(float damage, Vector2 origin, bool range = false)
     {
         if(CantGetDamaged)
             return;
+        if(range)
+            RangeHitAudio.Play();
         
         damaged = damageCooldown;
         movement.TakeDamage(damage, origin);
