@@ -41,6 +41,8 @@ public class SaveManager : MonoBehaviour
 public struct Saver
 {
     public PlayerSave playerSave;
+
+    public List<EnemySave> EnemySaves;
     
     public Dictionary<string, Vector2> Vectors;
     public Dictionary<string, float> floats;
@@ -52,5 +54,6 @@ public struct Saver
         floats = new Dictionary<string, float>();
         bools = new Dictionary<string, bool>();
         playerSave = new PlayerSave();
+        EnemySaves = new List<EnemySave>();
     }
 }

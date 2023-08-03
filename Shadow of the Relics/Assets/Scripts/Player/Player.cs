@@ -18,8 +18,12 @@ public class Player : MonoBehaviour
     [HideInInspector] public Vector2 latePosition, lastSeenPosition;
     public bool CantGetDamaged{get=>damaged > 0f;}
 
+    public static Player activePlayer;
+
     void Awake()
     {
+        activePlayer = this;
+
         movement.player = this;
         animator.player = this;
         health.player = this;

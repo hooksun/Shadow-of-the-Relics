@@ -9,6 +9,19 @@ public class EnemyMovement : EnemyBehaviour
 
     float direction{get=>transform.localScale.x; set=>transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);}
 
+    public void OnLoad(EnemySave save)
+    {
+        jumpTime = save.jumpTime;
+        jumpVelocity = save.jumpVelocity;
+    }
+
+    public EnemySave OnSave(EnemySave save)
+    {
+        save.jumpTime = jumpTime;
+        save.jumpVelocity = jumpVelocity;
+        return save;
+    }
+
     void Update()
     {
         Pathfind();
@@ -26,6 +39,8 @@ public class EnemyMovement : EnemyBehaviour
 
     public void StartChase()
     {
+        if(jumpTime > 0f)
+            return;
         if(currentPath == null)
             currentPath = PathManager.ClosestPathTo(transform.position);
         targetPath = null;
@@ -153,6 +168,13 @@ public class EnemyMovement : EnemyBehaviour
 
         jumpTime -= Time.deltaTime;
         if(jumpTime <= 0f)
+        {
+            if(currentPath == null)
+            {
+                currentPath = PathManager.ClosestPathTo(transform.position);
+                FindNewPath();
+            }
             transform.position = PointOnPath(transform.position, currentPath);
+        }
     }
 }

@@ -22,6 +22,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Player Target;
 
     public static List<Enemy> ActiveEnemies = new List<Enemy>();
+    static int enemyCount = 0;
+    int enemyIndex;
 
     void Awake()
     {
@@ -36,12 +38,60 @@ public class Enemy : MonoBehaviour
         movement.enabled = false;
         vision.enabled = false;
         attack.enabled = false;
+
+        SaveManager.OnLoad += OnLoad;
+        SaveManager.OnSave += OnSave;
+
+        enemyIndex = enemyCount;
+        enemyCount++;
     }
 
     void Start()
     {
         if(patrolPath == null)
             patrolPath = PathManager.ClosestPathTo(transform.position);
+    }
+
+    void OnLoad()
+    {
+        if(patrolPath == null)
+            patrolPath = PathManager.ClosestPathTo(transform.position);
+        
+        EnemySave save = SaveManager.saver.EnemySaves[enemyIndex];
+        
+        transform.position = save.position;
+        transform.localScale = new Vector3(save.direction, transform.localScale.y, transform.localScale.z);
+
+        if(save.patrol)
+            return;
+        
+        movement.OnLoad(save);
+        DetectPlayer(Player.activePlayer);
+        if(!save.aggro)
+            StopChase();
+    }
+
+    void OnSave()
+    {
+        int count = SaveManager.saver.EnemySaves.Count;
+        if(count != enemyCount)
+        {
+            for(int i = count; i < enemyCount; i++)
+            {
+                SaveManager.saver.EnemySaves.Add(new EnemySave());
+            }
+        }
+
+        EnemySave save = new EnemySave();
+
+        save.position = transform.position;
+        save.direction = transform.localScale.x;
+        save.aggro = aggro;
+        save.patrol = patrol.enabled;
+
+        save = movement.OnSave(save);
+        
+        SaveManager.saver.EnemySaves[enemyIndex] = save;
     }
 
     void OnEnable()
@@ -129,6 +179,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
 
 public struct EnemySave
 {
-    public Vector2 position;
-    public bool aggro;
+    public Vector2 position, jumpVelocity;
+    public bool aggro, patrol;
+    public float jumpTime, direction;
 }
