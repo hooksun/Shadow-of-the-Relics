@@ -43,17 +43,12 @@ public struct Saver
     public PlayerSave playerSave;
 
     public List<EnemySave> EnemySaves;
-    
-    public Dictionary<string, Vector2> Vectors;
-    public Dictionary<string, float> floats;
-    public Dictionary<string, bool> bools;
+    public List<bool> CollectedArtifacts;
 
     public Saver(float wtf)
     {
-        Vectors = new Dictionary<string, Vector2>();
-        floats = new Dictionary<string, float>();
-        bools = new Dictionary<string, bool>();
         playerSave = new PlayerSave();
         EnemySaves = new List<EnemySave>();
+        CollectedArtifacts = new List<bool>();
     }
 }

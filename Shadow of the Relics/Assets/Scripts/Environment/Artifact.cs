@@ -10,6 +10,8 @@ public class Artifact : MonoBehaviour
     public AudioPlayer collectedAudio;
 
     public static int collectedArtifacts;
+    static int artifactCount;
+    int artifactIndex;
 
     Transform target;
     Vector2 velocity;
@@ -18,7 +20,27 @@ public class Artifact : MonoBehaviour
     void Awake()
     {
         this.enabled = false;
+        artifactIndex = artifactCount;
+        artifactCount++;
         collectedArtifacts = 0;
+
+        SaveManager.OnLoad += OnLoad;
+        SaveManager.OnSave += OnSave;
+    }
+
+    void OnLoad()
+    {
+        bool collected = SaveManager.saver.CollectedArtifacts[artifactIndex];
+        if(collected)
+        {
+            gameObject.SetActive(false);
+            collectedArtifacts++;
+        }
+    }
+
+    void OnSave()
+    {
+        SaveManager.saver.CollectedArtifacts[artifactIndex] = !gameObject.activeInHierarchy;
     }
 
     void Update()
@@ -58,6 +80,7 @@ public class Artifact : MonoBehaviour
         time = -freeFallTime;
         collectedAudio.Play();
         collectedArtifacts++;
+
 
         if(detectPlayer)
             Enemy.AllDetectPlayer(player.GetComponent<Player>());

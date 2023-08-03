@@ -16,7 +16,7 @@ public class EnemyVision : EnemyBehaviour
             enemy.seePlayer = !Physics2D.Linecast(enemy.position + enemy.eyePosition, enemy.Target.position, ObstacleMask);
             if(enemy.seePlayer)
             {
-                LOSRenderer.SetPosition(0, enemy.position + enemy.eyePosition);
+                LOSRenderer.SetPosition(0, LOSRenderer.transform.position);
                 LOSRenderer.SetPosition(1, enemy.Target.position);
                 enemy.Target.Seen();
             }

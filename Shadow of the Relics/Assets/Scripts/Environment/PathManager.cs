@@ -7,15 +7,17 @@ public class PathManager : MonoBehaviour
 {
     public static PathManager instance;
 
-    public Tilemap PathMap, LinkMap;
+    public Tilemap[] PathMaps, LinkMaps;
     public List<Path> Paths;
 
     void Awake()
     {
         instance = this;
 
-        PathMap.GetComponent<TilemapRenderer>().enabled = false;
-        LinkMap.GetComponent<TilemapRenderer>().enabled = false;
+        foreach(Tilemap pathMap in PathMaps)
+            pathMap.GetComponent<TilemapRenderer>().enabled = false;
+        foreach(Tilemap linkMap in LinkMaps)
+            linkMap.GetComponent<TilemapRenderer>().enabled = false;
 
         GeneratePaths();
         GenerateLinks();
@@ -135,6 +137,12 @@ public class PathManager : MonoBehaviour
     void GeneratePaths()
     {
         Paths = new List<Path>();
+        foreach(Tilemap pathMap in PathMaps)
+            GeneratePath(pathMap);
+    }
+
+    void GeneratePath(Tilemap PathMap)
+    {
         Path current = null;
         Vector3Int pos = PathMap.cellBounds.position, end = pos + PathMap.cellBounds.size, point = pos;
         for(point.y = pos.y; point.y < end.y; point.y++)
@@ -164,7 +172,7 @@ public class PathManager : MonoBehaviour
     {
         foreach(Path path in Paths)
         {
-            if(LinkMap.HasTile(path.startCoord))
+            if(HasLink(path.startCoord))
             {
                 LinkedPath = new List<Path>();
                 FindLinkedPath(path.startCoord, Vector3Int.zero, path);
@@ -180,7 +188,7 @@ public class PathManager : MonoBehaviour
                 }
             }
 
-            if(LinkMap.HasTile(path.endCoord))
+            if(HasLink(path.endCoord))
             {
                 LinkedPath = new List<Path>();
                 FindLinkedPath(path.endCoord, Vector3Int.zero, path);
@@ -198,10 +206,30 @@ public class PathManager : MonoBehaviour
         }
     }
 
+    bool HasLink(Vector3Int coord)
+    {
+        foreach(Tilemap linkMap in LinkMaps)
+        {
+            if(linkMap.HasTile(coord))
+                return true;
+        }
+        return false;
+    }
+
+    bool HasPath(Vector3Int coord)
+    {
+        foreach(Tilemap pathMap in PathMaps)
+        {
+            if(pathMap.HasTile(coord))
+                return true;
+        }
+        return false;
+    }
+
     List<Path> LinkedPath;
     void FindLinkedPath(Vector3Int point, Vector3Int direction, Path origin)
     {
-        if(PathMap.HasTile(point))
+        if(HasPath(point))
         {
             Path path = PathAt(point);
             if(path != origin)
@@ -218,7 +246,7 @@ public class PathManager : MonoBehaviour
         {
             if(directions[i] == -direction)
                 continue;
-            if(!LinkMap.HasTile(point + directions[i]))
+            if(!HasLink(point + directions[i]))
                 continue;
             FindLinkedPath(point + directions[i], directions[i], origin);
         }

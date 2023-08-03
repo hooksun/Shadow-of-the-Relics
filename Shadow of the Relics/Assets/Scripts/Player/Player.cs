@@ -60,12 +60,14 @@ public class Player : MonoBehaviour
     void OnLoad()
     {
         transform.position = SaveManager.saver.playerSave.position;
+        movement.rb.velocity = SaveManager.saver.playerSave.velocity;
         health.SetHealth(SaveManager.saver.playerSave.health);
     }
 
     void OnSave()
     {
         SaveManager.saver.playerSave.position = transform.position;
+        SaveManager.saver.playerSave.velocity = movement.rb.velocity;
         SaveManager.saver.playerSave.health = health.GetHealth();
     }
 
@@ -104,6 +106,6 @@ public abstract class PlayerBehaviour : MonoBehaviour
 
 public struct PlayerSave
 {
-    public Vector2 position;
+    public Vector2 position, velocity;
     public float health;
 }
