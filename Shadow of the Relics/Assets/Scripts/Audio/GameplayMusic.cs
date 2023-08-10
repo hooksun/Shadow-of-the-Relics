@@ -16,6 +16,7 @@ public class GameplayMusic : MonoBehaviour
 
     void Start()
     {
+        instance = this;
         this.enabled = false;
         stealthVolume = stealth.volume;
         detectVolume = detect.volume;

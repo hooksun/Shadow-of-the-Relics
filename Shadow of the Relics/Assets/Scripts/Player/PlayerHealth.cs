@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerHealth : PlayerBehaviour
 {
-    public float maxHealth;
+    public float maxHealth, healCooldown, healSpeed;
     public AudioPlayer damagedAudio;
 
-    float health;
+    float health, cooldown;
 
     void Start()
     {
@@ -22,6 +22,21 @@ public class PlayerHealth : PlayerBehaviour
         {
             //ded
         }
+    }
+
+    void Update()
+    {
+        if(player.detected)
+        {
+            cooldown = 0f;
+            return;
+        }
+        if(cooldown < healCooldown)
+        {
+            cooldown += Time.deltaTime;
+            return;
+        }
+        health = Mathf.MoveTowards(health, maxHealth, healSpeed * Time.deltaTime);
     }
 
     public void SetHealth(float newHealth)

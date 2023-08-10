@@ -10,9 +10,14 @@ public class GrapplePoint : MonoBehaviour
     public SpriteRenderer Renderer;
     public Sprite[] sprites;
 
-    void Start()
+    void OnEnable()
     {
         Points.Add(this);
+    }
+
+    void OnDisable()
+    {
+        Points.Remove(this);
     }
 
     public void SetSprite(int index)

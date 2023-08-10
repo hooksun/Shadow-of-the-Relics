@@ -51,9 +51,9 @@ public class EnemyPatrol : EnemyBehaviour
 
     bool Turn()
     {
-        if(Physics2D.Raycast((Vector2)transform.position + raycastPoint, new Vector2(direction, 0f), bumpLength, ObstacleMask))
-            return true;
         Vector2 edge = (Vector2)transform.position + raycastPoint + new Vector2(direction, 0f) * enemy.halfWidth;
+        if(Physics2D.Raycast(edge, new Vector2(direction, 0f), bumpLength - enemy.halfWidth, ObstacleMask))
+            return true;
         if(!Physics2D.Raycast(edge, Vector2.down, height, ObstacleMask))
             return true;
         return false;

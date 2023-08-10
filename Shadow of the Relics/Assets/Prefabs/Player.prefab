@@ -1232,6 +1232,7 @@ MonoBehaviour:
   airAccel: 100
   jumpHeight: 7
   airJumpHeight: 5
+  airJumpMaxVelocity: 3
   coyoteTime: 0.1
   jumpGravity: 100
   fallGravity: 80
@@ -1245,7 +1246,7 @@ MonoBehaviour:
   WallCheckSize: {x: 0.1, y: 0.2}
   WallJumpDistance: {x: 2, y: 6}
   WallSlideSpeed: -5
-  MinWallSpeed: 0
+  MinWallSpeed: 3
   WallJumpStopMoveTime: 0
   grappleCastSpeed: 10
   grappleStartSpeed: 30
@@ -1292,6 +1293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   maxHealth: 100
+  healCooldown: 5
+  healSpeed: 5
   damagedAudio: {fileID: 1490430601110281408}
 --- !u!50 &8244692190373936788
 Rigidbody2D:

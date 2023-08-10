@@ -14,11 +14,13 @@ public class MainMenu : MonoBehaviour
 
     public void NewGame(int sceneID)
     {
+        SaveManager.loadOnStart = false;
         SceneManager.LoadScene(sceneID);
     }
 
     public void Continue(int sceneID)
     {
+        SaveManager.loadOnStart = true;
         SceneManager.LoadScene(sceneID);
     }
 

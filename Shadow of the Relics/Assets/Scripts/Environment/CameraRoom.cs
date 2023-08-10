@@ -13,9 +13,14 @@ public class CameraRoom : MonoBehaviour
     public Vector2 boundPosition{get=>transform.position;}
     public Vector2 outerPosition{get=>boundPosition - BLborder;}
 
-    void Awake()
+    void OnEnable()
     {
         Rooms.Add(this);
+    }
+
+    void OnDisable()
+    {
+        Rooms.Remove(this);
     }
 
     public Vector2 UV(Vector2 pos)

@@ -8,7 +8,8 @@ public class PlayerMovement : PlayerBehaviour
     public Rigidbody2D rb;
     public Camera cam;
 
-    public float speed, accel, airAccel, jumpHeight, airJumpHeight, coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
+    public float speed, accel, airAccel, jumpHeight, airJumpHeight, airJumpMaxVelocity,
+    coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
     public Vector2 damageKnockback;
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpDistance;
@@ -82,8 +83,9 @@ public class PlayerMovement : PlayerBehaviour
         }
         if(!isGrounded && coyote <= 0f)
         {
-            if(velocity.y > 0f || airJump == airJumps)
+            if(velocity.y > airJumpMaxVelocity || airJump == airJumps)
                 return;
+                
             airJump++;
             rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(2 * jumpGravity * airJumpHeight), 0f);
             JumpAudio.Play();

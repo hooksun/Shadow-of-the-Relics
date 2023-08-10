@@ -28,6 +28,12 @@ public class Artifact : MonoBehaviour
         SaveManager.OnSave += OnSave;
     }
 
+    void OnDisable()
+    {
+        SaveManager.OnLoad -= OnLoad;
+        SaveManager.OnSave -= OnSave;
+    }
+
     void OnLoad()
     {
         bool collected = SaveManager.saver.CollectedArtifacts[artifactIndex];

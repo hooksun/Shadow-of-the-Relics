@@ -7,6 +7,7 @@ public class EnemyVision : EnemyBehaviour
     public LineRenderer LOSRenderer;
     public float nonAggroDetectRadius;
     public LayerMask ObstacleMask, PlayerMask;
+    public bool enableLOSLine;
 
     float detectLevel;
     void Update()
@@ -23,7 +24,7 @@ public class EnemyVision : EnemyBehaviour
             else if(!enemy.Target.detected)
                 enemy.StopChase();
 
-            LOSRenderer.enabled = enemy.seePlayer;
+            LOSRenderer.enabled = enableLOSLine && enemy.seePlayer;
             return;
         }
 
