@@ -44,6 +44,7 @@ public class PauseMenu : MonoBehaviour
         AudioPlayer.PauseAll(false);
         GameplayMusic.PauseMusic(false);
         isPaused = false;
+        SettingManager.OnSave();
     }
 
     public void Home(int sceneID)

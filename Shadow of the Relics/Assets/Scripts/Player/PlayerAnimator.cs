@@ -11,6 +11,9 @@ public class PlayerAnimator : PlayerBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         PlayDefaultAnimations();
         AnimateRotate();
     }

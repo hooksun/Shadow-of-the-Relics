@@ -35,6 +35,9 @@ public class Player : MonoBehaviour
     float detectTime, damaged;
     void FixedUpdate()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         StartCoroutine(SetLatePosition(position));
         if(detectTime > 0f)
         {

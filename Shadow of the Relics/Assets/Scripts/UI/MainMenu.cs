@@ -7,11 +7,6 @@ public class MainMenu : MonoBehaviour
 {
     public GameObject settingMenu;
 
-    void Start()
-    {
-        settingMenu.SetActive(false);
-    }
-
     public void NewGame(int sceneID)
     {
         SaveManager.loadOnStart = false;

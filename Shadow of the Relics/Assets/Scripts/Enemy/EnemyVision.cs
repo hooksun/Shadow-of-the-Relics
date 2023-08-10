@@ -12,6 +12,9 @@ public class EnemyVision : EnemyBehaviour
     float detectLevel;
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         if(enemy.aggro)
         {
             enemy.seePlayer = !Physics2D.Linecast(enemy.position + enemy.eyePosition, enemy.Target.position, ObstacleMask);

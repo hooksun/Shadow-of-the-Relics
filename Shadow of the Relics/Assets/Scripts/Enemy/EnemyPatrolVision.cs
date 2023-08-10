@@ -22,7 +22,7 @@ public class EnemyPatrolVision : EnemyBehaviour
     bool detected;
     void FixedUpdate()
     {
-        if(detected)
+        if(detected || Time.timeScale == 0f)
             return;
         
         Collider2D hit = Physics2D.OverlapBox(transform.position, bounds, 0f, PlayerMask);

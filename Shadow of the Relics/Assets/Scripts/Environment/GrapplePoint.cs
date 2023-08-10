@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[SelectionBase]
 public class GrapplePoint : MonoBehaviour
 {
     public static List<GrapplePoint> Points = new List<GrapplePoint>();

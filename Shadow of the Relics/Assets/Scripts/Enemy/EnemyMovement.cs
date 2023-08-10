@@ -25,6 +25,9 @@ public class EnemyMovement : EnemyBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         Pathfind();
     }
 

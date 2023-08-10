@@ -52,7 +52,7 @@ public class PlayerMovement : PlayerBehaviour
     bool isJumping;
     public void JumpInput(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
+        if(ctx.performed || Time.timeScale == 0f)
             return;
         if(!ctx.started)
         {
@@ -207,6 +207,9 @@ public class PlayerMovement : PlayerBehaviour
 
     void FixedUpdate()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         velocity = rb.velocity - groundVelocity;
 
         GroundCheck();
@@ -242,6 +245,9 @@ public class PlayerMovement : PlayerBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         FindClosestGrapplePoint();
         if(grappling)
         {

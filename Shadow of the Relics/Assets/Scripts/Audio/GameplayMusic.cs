@@ -2,30 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameplayMusic : MonoBehaviour
+public class GameplayMusic : BackgroundMusic
 {
     static GameplayMusic instance;
 
-    public AudioSource stealth, detect;
+    public AudioSource detect;
     public float detectTranstitionTime, stealthTransitionTime;
 
-    float transition, volume = 1f, stealthVolume, detectVolume;
+    float transition, volume = 1f, detectVolume;
     bool detected;
 
-    float startVolume{get=>(detected?stealthVolume:detectVolume) * volume;}
+    float startVolume{get=>(detected?bgmVolume:detectVolume) * volume;}
 
-    void Start()
+    protected override void Start()
     {
-        instance = this;
+        base.Start();
         this.enabled = false;
-        stealthVolume = stealth.volume;
         detectVolume = detect.volume;
-        stealth.Play();
     }
 
     public static void SwitchMusic(bool detected) => instance.Switch(detected);
-    public static void PauseMusic(bool pause) => instance.Pause(pause);
-    public static void SetMusicVolume(float volume) => instance.SetVolume(volume);
 
     void Switch(bool detected)
     {
@@ -34,9 +30,9 @@ public class GameplayMusic : MonoBehaviour
         this.enabled = true;
     }
 
-    void Pause(bool pause)
+    protected override void Pause(bool pause)
     {
-        setPause(stealth, pause);
+        setPause(bgm, pause);
         setPause(detect, pause);
     }
 
@@ -51,10 +47,10 @@ public class GameplayMusic : MonoBehaviour
         }
     }
 
-    void SetVolume(float volume)
+    protected override void SetVolume(float volume)
     {
         this.volume = volume;
-        stealth.volume = stealthVolume * volume;
+        bgm.volume = bgmVolume * volume;
         detect.volume = detectVolume * volume;
     }
 
@@ -65,10 +61,10 @@ public class GameplayMusic : MonoBehaviour
 
         if(detected)
         {
-            Transition(stealth, detect, detectTranstitionTime);
+            Transition(bgm, detect, detectTranstitionTime);
             return;
         }
-        Transition(detect, stealth, stealthTransitionTime);
+        Transition(detect, bgm, stealthTransitionTime);
     }
 
     void Transition(AudioSource from, AudioSource to, float time)

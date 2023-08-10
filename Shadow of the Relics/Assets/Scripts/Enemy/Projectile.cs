@@ -23,6 +23,9 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         if(stuck)
         {
             if(despawn <= 0f)

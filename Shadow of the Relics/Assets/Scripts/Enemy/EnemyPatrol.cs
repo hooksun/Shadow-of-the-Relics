@@ -22,6 +22,8 @@ public class EnemyPatrol : EnemyBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
         Patrol();
     }
 

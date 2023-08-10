@@ -23,6 +23,9 @@ public class EnemyAttack : EnemyBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0f)
+            return;
+
         if(cooldown > 0f)
         {
             cooldown -= Time.deltaTime;
