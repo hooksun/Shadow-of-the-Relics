@@ -1257,7 +1257,7 @@ MonoBehaviour:
   minGrappleInputDistance: 8
   grapplePerchOffset: {x: 0, y: 0.875}
   grapple: {fileID: 2653406475684024757}
-  airGrapples: 3
+  airGrapples: -1
   airDashes: 1
   DashDist: 6
   DashCooldown: 0.2
@@ -1296,6 +1296,7 @@ MonoBehaviour:
   healCooldown: 5
   healSpeed: 5
   damagedAudio: {fileID: 1490430601110281408}
+  HealthBar: {fileID: 0}
 --- !u!50 &8244692190373936788
 Rigidbody2D:
   serializedVersion: 4

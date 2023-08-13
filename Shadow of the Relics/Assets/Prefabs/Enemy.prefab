@@ -975,7 +975,7 @@ MonoBehaviour:
   raycastPoint: {x: 0, y: 0.75}
   ObstacleMask:
     serializedVersion: 2
-    m_Bits: 264
+    m_Bits: 2312
   footstepAudio: {fileID: 6881128528309215293}
 --- !u!114 &850112976229304758
 MonoBehaviour:
@@ -1039,7 +1039,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2}
+  m_Size: {x: 1.1, y: 2}
   m_EdgeRadius: 0
 --- !u!1 &7456385318348013450
 GameObject:

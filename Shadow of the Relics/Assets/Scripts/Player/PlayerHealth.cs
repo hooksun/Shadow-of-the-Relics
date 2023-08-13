@@ -40,6 +40,7 @@ public class PlayerHealth : PlayerBehaviour
             return;
         }
         health = Mathf.MoveTowards(health, maxHealth, healSpeed * Time.deltaTime);
+        HealthBar.value = health;
     }
 
     public void SetHealth(float newHealth)

@@ -29,8 +29,8 @@ public class MainMenu : MonoBehaviour
         settingMenu.SetActive(false);
     }
 
-    public void Credit(int sceneID)
+    public void Quit()
     {
-        SceneManager.LoadScene(sceneID);
+        Application.Quit();
     }
 }
