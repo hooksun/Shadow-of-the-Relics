@@ -11,6 +11,7 @@ public class SaveManager : MonoBehaviour
     public static bool loadOnStart;
 
     static string path{get=>Application.persistentDataPath + "/Save.json";}
+    public static bool hasSaveFile{get=>File.Exists(path);}
 
     public static void Save()
     {
@@ -36,19 +37,28 @@ public class SaveManager : MonoBehaviour
         if(loadOnStart)
             Load();
     }
+
+    public static void ResetDelegates()
+    {
+        OnSave = null;
+        OnLoad = null;
+        Artifact.artifactCount = 0;
+        Enemy.enemyCount = 0;
+    }
 }
 
+[System.Serializable]
 public struct Saver
 {
     public PlayerSave playerSave;
 
-    public List<EnemySave> EnemySaves;
-    public List<bool> CollectedArtifacts;
+    public EnemySave[] EnemySaves;
+    public bool[] CollectedArtifacts;
 
     public Saver(float wtf)
     {
         playerSave = new PlayerSave();
-        EnemySaves = new List<EnemySave>();
-        CollectedArtifacts = new List<bool>();
+        EnemySaves = new EnemySave[0];
+        CollectedArtifacts = new bool[0];
     }
 }

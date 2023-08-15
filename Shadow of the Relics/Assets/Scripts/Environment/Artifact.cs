@@ -10,7 +10,7 @@ public class Artifact : MonoBehaviour
     public AudioPlayer collectedAudio;
 
     public static int collectedArtifacts;
-    static int artifactCount;
+    public static int artifactCount;
     int artifactIndex;
 
     Transform target;
@@ -28,12 +28,6 @@ public class Artifact : MonoBehaviour
         SaveManager.OnSave += OnSave;
     }
 
-    void OnDisable()
-    {
-        SaveManager.OnLoad -= OnLoad;
-        SaveManager.OnSave -= OnSave;
-    }
-
     void OnLoad()
     {
         bool collected = SaveManager.saver.CollectedArtifacts[artifactIndex];
@@ -46,6 +40,10 @@ public class Artifact : MonoBehaviour
 
     void OnSave()
     {
+        if(SaveManager.saver.CollectedArtifacts == null || SaveManager.saver.CollectedArtifacts.Length != artifactCount)
+        {
+            SaveManager.saver.CollectedArtifacts = new bool[artifactCount];
+        }
         SaveManager.saver.CollectedArtifacts[artifactIndex] = !gameObject.activeInHierarchy;
     }
 

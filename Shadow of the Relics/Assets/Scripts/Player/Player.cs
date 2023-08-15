@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
         if(detectTime > 0f)
         {
             detectTime -= Time.fixedDeltaTime;
+            if(detectTime <= 0f)
+                GameplayMusic.SwitchMusic(false);
         }
         if(damaged > 0f)
             damaged -= Time.fixedDeltaTime;
@@ -107,6 +109,7 @@ public abstract class PlayerBehaviour : MonoBehaviour
     public virtual void TakeDamage(float damage, Vector2 origin){}
 }
 
+[System.Serializable]
 public struct PlayerSave
 {
     public Vector2 position, velocity;

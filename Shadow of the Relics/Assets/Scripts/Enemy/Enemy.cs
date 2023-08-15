@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Player Target;
 
     public static List<Enemy> ActiveEnemies = new List<Enemy>();
-    static int enemyCount = 0;
+    public static int enemyCount = 0;
     int enemyIndex;
 
     void Awake()
@@ -73,13 +73,9 @@ public class Enemy : MonoBehaviour
 
     void OnSave()
     {
-        int count = SaveManager.saver.EnemySaves.Count;
-        if(count != enemyCount)
+        if(SaveManager.saver.EnemySaves == null || SaveManager.saver.EnemySaves.Length != enemyCount)
         {
-            for(int i = count; i < enemyCount; i++)
-            {
-                SaveManager.saver.EnemySaves.Add(new EnemySave());
-            }
+            SaveManager.saver.EnemySaves = new EnemySave[enemyCount];
         }
 
         EnemySave save = new EnemySave();
@@ -137,6 +133,7 @@ public class Enemy : MonoBehaviour
         {
             enemy.DetectPlayer(player);
         }
+        GameplayMusic.SwitchMusic(true);
     }
 
     void DetectPlayer(Player player)
@@ -177,6 +174,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     [HideInInspector] public Enemy enemy;
 }
 
+[System.Serializable]
 public struct EnemySave
 {
     public Vector2 position, jumpVelocity;

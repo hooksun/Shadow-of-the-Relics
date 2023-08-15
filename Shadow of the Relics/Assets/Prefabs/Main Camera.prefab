@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
+  camHeight: 16
   bounds: {x: 28, y: 16}
   maxSpeed: 80
   transitionSpeed: 2

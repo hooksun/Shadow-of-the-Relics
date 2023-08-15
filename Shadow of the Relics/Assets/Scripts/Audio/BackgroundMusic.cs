@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BackgroundMusic : MonoBehaviour
 {
-    static BackgroundMusic instance;
+    protected static BackgroundMusic instance;
     
     public SettingManager settingManager;
 

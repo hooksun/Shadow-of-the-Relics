@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GameplayMusic : BackgroundMusic
 {
-    static GameplayMusic instance;
-
     public AudioSource detect;
     public float detectTranstitionTime, stealthTransitionTime;
 
@@ -16,12 +14,12 @@ public class GameplayMusic : BackgroundMusic
 
     protected override void Start()
     {
-        base.Start();
         this.enabled = false;
         detectVolume = detect.volume;
+        base.Start();
     }
 
-    public static void SwitchMusic(bool detected) => instance.Switch(detected);
+    public static void SwitchMusic(bool detected) => ((GameplayMusic)instance).Switch(detected);
 
     void Switch(bool detected)
     {
@@ -38,13 +36,13 @@ public class GameplayMusic : BackgroundMusic
 
     void setPause(AudioSource source, bool pause)
     {
-        if(source.isPlaying)
+        if(pause)
         {
-            if(pause)
+            if(source.isPlaying)
                 source.Pause();
-            else
-                source.UnPause();
         }
+        else
+            source.UnPause();
     }
 
     protected override void SetVolume(float volume)
@@ -77,6 +75,8 @@ public class GameplayMusic : BackgroundMusic
         {
             from.Stop();
             from.volume = startVolume;
+            detected = !detected;
+            to.volume = startVolume;
             to.Play();
             this.enabled = false;
         }

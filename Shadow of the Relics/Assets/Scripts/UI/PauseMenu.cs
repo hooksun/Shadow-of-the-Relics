@@ -32,7 +32,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         AudioPlayer.PauseAll(true);
-        GameplayMusic.PauseMusic(true);
+        BackgroundMusic.PauseMusic(true);
         isPaused = true;
     }
 
@@ -42,7 +42,7 @@ public class PauseMenu : MonoBehaviour
         settingMenu.SetActive(false);
         Time.timeScale = 1f;
         AudioPlayer.PauseAll(false);
-        GameplayMusic.PauseMusic(false);
+        BackgroundMusic.PauseMusic(false);
         isPaused = false;
         SettingManager.OnSave();
     }
@@ -50,6 +50,8 @@ public class PauseMenu : MonoBehaviour
     public void Home(int sceneID)
     {
         Time.timeScale = 1f;
+        SaveManager.Save();
+        SaveManager.ResetDelegates();
         SceneManager.LoadScene(sceneID);
     }
 

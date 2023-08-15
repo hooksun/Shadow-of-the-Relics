@@ -5,12 +5,14 @@ using UnityEngine;
 public class CameraRig : MonoBehaviour
 {
     public Rigidbody2D Target;
-    public Vector2 bounds;
+    public float camHeight;
+    public Vector2 bounds{get=>new Vector2(camHeight / Screen.height * Screen.width, camHeight);}
     public float maxSpeed, transitionSpeed, minTransitionSpeed;
 
     CameraRoom current;
+    bool started = false;
 
-    void Start()
+    void StartRig()
     {
         current = FindTargetRoom();
         transform.position = GetCameraPosition();
@@ -30,6 +32,12 @@ public class CameraRig : MonoBehaviour
 
     void Update()
     {
+        if(!started)
+        {
+            started = true;
+            StartRig();
+        }
+
         if(current == null || !current.inBound(Target.transform.position))
         {
             current = FindTargetRoom();
