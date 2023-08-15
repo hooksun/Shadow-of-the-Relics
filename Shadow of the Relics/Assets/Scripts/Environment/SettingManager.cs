@@ -33,6 +33,8 @@ public class SettingManager : MonoBehaviour
 
     void OnEnable()
     {
+        if(volume == null)
+            return;
         volume.value = settings.volume;
         music.value = settings.musicVolume;
     }

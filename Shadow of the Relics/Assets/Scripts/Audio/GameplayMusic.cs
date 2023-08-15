@@ -23,6 +23,8 @@ public class GameplayMusic : BackgroundMusic
 
     void Switch(bool detected)
     {
+        if(detect.isPlaying == detected && bgm.isPlaying != detected)
+            return;
         this.detected = detected;
         transition = 0f;
         this.enabled = true;

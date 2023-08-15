@@ -31,6 +31,7 @@ public class Artifact : MonoBehaviour
         {
             gameObject.SetActive(false);
             collectedArtifacts++;
+            Gate.GetArtifact(collectedArtifacts);
         }
     }
 
@@ -80,7 +81,7 @@ public class Artifact : MonoBehaviour
         time = -freeFallTime;
         collectedAudio.Play();
         collectedArtifacts++;
-
+        Gate.GetArtifact(collectedArtifacts);
 
         if(detectPlayer)
             Enemy.AllDetectPlayer(player.GetComponent<Player>());

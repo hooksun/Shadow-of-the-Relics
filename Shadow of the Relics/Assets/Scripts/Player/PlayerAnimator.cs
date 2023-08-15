@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerAnimator : PlayerBehaviour
 {
     public string idleAnim, runAnim, jumpAnim, fallAnim, wallAnim, grappleAnim, perchAnim, damagedAnim;
-    public float rotateSpeed, damagedOpacity;
+    public float rotateSpeed, damagedOpacity, enterGateTime;
     public AnimationCurve pulseOpacityCurve;
     public int damagedPulseAmount;
 
@@ -95,7 +96,14 @@ public class PlayerAnimator : PlayerBehaviour
 
     public override void TakeDamage(float damage, Vector2 origin)
     {
+        if(player.dead)
+            return;
         StartCoroutine(PulseOpacity(player.damageCooldown, damagedPulseAmount, damagedOpacity));
+    }
+
+    public override void Respawn()
+    {
+        Stop();
     }
 
     IEnumerator PulseOpacity(float time, int amount, float opacity)
@@ -118,5 +126,28 @@ public class PlayerAnimator : PlayerBehaviour
         Color newCol = player.sprite.color;
         newCol.a = 1f;
         player.sprite.color = newCol;
+    }
+
+    public void EnterGate()
+    {
+        StartCoroutine(EnterGateOpactity());
+    }
+
+    IEnumerator EnterGateOpactity()
+    {
+        float t = enterGateTime;
+        while(t > 0f)
+        {
+            Color newCol = player.sprite.color;
+            newCol.a = t/enterGateTime;
+            player.sprite.color = newCol;
+
+            yield return null;
+            t -= Time.deltaTime;
+        }
+
+        player.dead = true;//to respawn
+        SaveManager.Save();
+        SceneManager.LoadScene(2);
     }
 }

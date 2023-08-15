@@ -248,7 +248,7 @@ MonoBehaviour:
   speed: 30
   rotateSpeed: -4000
   radius: 0.2
-  damage: 10
+  damage: 20
   despawnTime: 5
   fadeTime: 1
   ObstacleMask:

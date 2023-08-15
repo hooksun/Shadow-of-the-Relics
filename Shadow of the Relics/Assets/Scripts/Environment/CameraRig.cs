@@ -12,7 +12,7 @@ public class CameraRig : MonoBehaviour
     CameraRoom current;
     bool started = false;
 
-    void StartRig()
+    public void StartRig()
     {
         current = FindTargetRoom();
         transform.position = GetCameraPosition();

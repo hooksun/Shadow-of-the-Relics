@@ -24,7 +24,15 @@ public class PlayerHealth : PlayerBehaviour
         if(health <= 0f)
         {
             //ded
+            player.dead = true;
         }
+    }
+
+    public override void Respawn()
+    {
+        health = maxHealth;
+        HealthBar.value = health;
+        cooldown = 0f;
     }
 
     void Update()

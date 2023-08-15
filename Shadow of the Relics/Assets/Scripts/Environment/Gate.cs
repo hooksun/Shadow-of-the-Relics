@@ -1,30 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Gate : MonoBehaviour
 {
     static Gate instance;
     
-    public SpriteRenderer GateRenderer;
+    public SpriteRenderer GateRenderer, CrystalRenderer;
+    public Image CrystalUI;
     public Sprite OpenGate;
+    public Sprite[] CrystalSprites;
     public Collider2D GateTrigger;
 
-    public static void OnGetArtifact() => instance.TryOpenGate();
+    public static void GetArtifact(int artifacts) => instance.CollectArtifact(artifacts);
 
     void Awake()
     {
         instance = this;
         GateTrigger.enabled = false;
+        CollectArtifact(0);
     }
 
-    void TryOpenGate()
+    void CollectArtifact(int artifacts)
     {
-        foreach(bool b in SaveManager.saver.CollectedArtifacts)
-        {
-            if(!b)
-                return;
-        }
+        CrystalUI.sprite = CrystalRenderer.sprite = CrystalSprites[artifacts];
+        if(artifacts < CrystalSprites.Length - 1)
+            return;
 
         GateRenderer.sprite = OpenGate;
         GateTrigger.enabled = true;
@@ -33,6 +35,6 @@ public class Gate : MonoBehaviour
     void OnTriggerStay2D(Collider2D collider)
     {
         GateTrigger.enabled = false;
-        //player enter gate
+        Player.activePlayer.EnterGate();
     }
 }

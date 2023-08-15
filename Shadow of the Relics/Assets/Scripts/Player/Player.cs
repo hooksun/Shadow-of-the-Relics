@@ -9,16 +9,20 @@ public class Player : MonoBehaviour
     public PlayerHealth health;
     public SpriteRenderer sprite;
     public Animator Anim;
+    public GameObject Corpse;
 
+    public Vector2 respawnPosition;
     public float detectCooldown, stopDetectTime, latePositionTime, damageCooldown;
     public AudioPlayer RangeHitAudio;
 
     public Vector2 position{get=>transform.position;}
     public float activeDir{get=>(sprite.flipX?-1f:1f); set=>sprite.flipX = (value < 0f);}
     [HideInInspector] public Vector2 latePosition, lastSeenPosition;
-    public bool CantGetDamaged{get=>damaged > 0f;}
+    public bool CantGetDamaged{get=>dead || damaged > 0f;}
 
     public static Player activePlayer;
+
+    [HideInInspector] public bool dead;
 
     void Awake()
     {
@@ -57,13 +61,39 @@ public class Player : MonoBehaviour
             RangeHitAudio.Play();
         
         damaged = damageCooldown;
+        health.TakeDamage(damage, origin);
         movement.TakeDamage(damage, origin);
         animator.TakeDamage(damage, origin);
-        health.TakeDamage(damage, origin);
+    }
+
+    public void Respawn()
+    {
+        transform.position = respawnPosition;
+        detectTime = 0f;
+        damaged = 0.1f;
+        dead = false;
+        health.Respawn();
+        movement.Respawn();
+        animator.Respawn();
+
+        Corpse.SetActive(false);
+        sprite.enabled = true;
+        GameplayMusic.SwitchMusic(false);
+    }
+
+    public void EnterGate()
+    {
+        animator.EnterGate();
     }
 
     void OnLoad()
     {
+        if(SaveManager.saver.playerSave.dead)
+        {
+            Respawn();
+            return;
+        }
+        
         transform.position = SaveManager.saver.playerSave.position;
         movement.rb.velocity = SaveManager.saver.playerSave.velocity;
         health.SetHealth(SaveManager.saver.playerSave.health);
@@ -81,6 +111,7 @@ public class Player : MonoBehaviour
         SaveManager.saver.playerSave.health = health.GetHealth();
         SaveManager.saver.playerSave.direction = activeDir;
         SaveManager.saver.playerSave.detectTime = detectTime;
+        SaveManager.saver.playerSave.dead = dead;
     }
 
     IEnumerator SetLatePosition(Vector2 pos)
@@ -114,6 +145,7 @@ public abstract class PlayerBehaviour : MonoBehaviour
     [HideInInspector] public Player player;
 
     public virtual void TakeDamage(float damage, Vector2 origin){}
+    public virtual void Respawn(){}
 }
 
 [System.Serializable]
@@ -121,4 +153,5 @@ public struct PlayerSave
 {
     public Vector2 position, velocity;
     public float health, direction, detectTime;
+    public bool dead;
 }

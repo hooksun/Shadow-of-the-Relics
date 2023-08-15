@@ -990,7 +990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy: {fileID: 0}
-  damage: 10
+  damage: 30
   hitboxOffset: {x: 0, y: 0.9}
   hitboxSize: {x: 1, y: 1.8}
   damageMask:

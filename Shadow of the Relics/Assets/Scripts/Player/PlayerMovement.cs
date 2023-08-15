@@ -9,8 +9,8 @@ public class PlayerMovement : PlayerBehaviour
     public Camera cam;
 
     public float speed, accel, airAccel, jumpHeight, airJumpHeight, airJumpMaxVelocity,
-    coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime;
-    public Vector2 damageKnockback;
+    coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime, corpseTime;
+    public Vector2 damageKnockback, deadKnockback;
     public int airJumps, wallJumps;
     public Vector2 WallCheckPoint, WallCheckSize, WallJumpDistance;
     public float WallSlideSpeed, MinWallSpeed, WallJumpStopMoveTime;
@@ -32,7 +32,7 @@ public class PlayerMovement : PlayerBehaviour
 
     Vector2 groundVelocity;
     
-    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove, perchTime, coyote;
+    float direction, directionY, groundCooldown, dashCooldown, jumpCooldown, wallJumpStopMove, perchTime, coyote, corpse;
     int airJump, wallJump, airDash, grapples;
 
     float activeDir{get=>(player.sprite.flipX?-1f:1f); set=>player.sprite.flipX = (value < 0f);}
@@ -194,21 +194,36 @@ public class PlayerMovement : PlayerBehaviour
     float paralyzed;
     public override void TakeDamage(float damage, Vector2 origin)
     {
-        Vector2 knockback = damageKnockback;
+        Vector2 knockback = (player.dead?deadKnockback:damageKnockback);
         float damagedDir = (onWall == 0f?Mathf.Sign(transform.position.x - origin.x):-onWall);
         knockback.x *= damagedDir;
-        paralyzed = damageParalyzedTime;
+        paralyzed = (player.dead?Mathf.Infinity:damageParalyzedTime);
         activeDir = -damagedDir;
         if(grappling)
             CancelGrapple();
         rb.velocity = knockback;
+        isGrounded = false;
         player.animator.Play(player.animator.damagedAnim);
+    }
+
+    public override void Respawn()
+    {
+        paralyzed = 0f;
+        cam.GetComponent<CameraRig>().StartRig();
     }
 
     void FixedUpdate()
     {
         if(Time.timeScale == 0f)
             return;
+
+        if(corpse > 0f)
+        {
+            corpse -= Time.fixedDeltaTime;
+            if(corpse <= 0f)
+                player.Respawn();
+            return;
+        }
 
         velocity = rb.velocity - groundVelocity;
 
@@ -306,6 +321,12 @@ public class PlayerMovement : PlayerBehaviour
             {
                 airJump = wallJump = airDash = grapples = 0;
                 RunAudio.Play();
+                if(player.dead)
+                {
+                    corpse = corpseTime;
+                    player.Corpse.SetActive(true);
+                    player.sprite.enabled = false;
+                }
             }
             else
             {
