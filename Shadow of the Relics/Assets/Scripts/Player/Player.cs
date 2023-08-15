@@ -67,6 +67,11 @@ public class Player : MonoBehaviour
         transform.position = SaveManager.saver.playerSave.position;
         movement.rb.velocity = SaveManager.saver.playerSave.velocity;
         health.SetHealth(SaveManager.saver.playerSave.health);
+        activeDir = SaveManager.saver.playerSave.direction;
+        detectTime = SaveManager.saver.playerSave.detectTime;
+
+        if(detected)
+            GameplayMusic.SwitchMusic(true);
     }
 
     void OnSave()
@@ -74,6 +79,8 @@ public class Player : MonoBehaviour
         SaveManager.saver.playerSave.position = transform.position;
         SaveManager.saver.playerSave.velocity = movement.rb.velocity;
         SaveManager.saver.playerSave.health = health.GetHealth();
+        SaveManager.saver.playerSave.direction = activeDir;
+        SaveManager.saver.playerSave.detectTime = detectTime;
     }
 
     IEnumerator SetLatePosition(Vector2 pos)
@@ -113,5 +120,5 @@ public abstract class PlayerBehaviour : MonoBehaviour
 public struct PlayerSave
 {
     public Vector2 position, velocity;
-    public float health;
+    public float health, direction, detectTime;
 }

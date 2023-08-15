@@ -11,7 +11,7 @@ public class PlayerHealth : PlayerBehaviour
 
     float health, cooldown;
 
-    void Start()
+    void Awake()
     {
         health = maxHealth;
     }

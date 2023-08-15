@@ -22,8 +22,6 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public Player Target;
 
     public static List<Enemy> ActiveEnemies = new List<Enemy>();
-    public static int enemyCount = 0;
-    int enemyIndex;
 
     void Awake()
     {
@@ -41,9 +39,6 @@ public class Enemy : MonoBehaviour
 
         SaveManager.OnLoad += OnLoad;
         SaveManager.OnSave += OnSave;
-
-        enemyIndex = enemyCount;
-        enemyCount++;
     }
 
     void Start()
@@ -57,7 +52,7 @@ public class Enemy : MonoBehaviour
         if(patrolPath == null)
             patrolPath = PathManager.ClosestPathTo(transform.position);
         
-        EnemySave save = SaveManager.saver.EnemySaves[enemyIndex];
+        EnemySave save = SaveManager.saver.EnemySaves[transform.GetSiblingIndex()];
         
         transform.position = save.position;
         transform.localScale = new Vector3(save.direction, transform.localScale.y, transform.localScale.z);
@@ -73,9 +68,9 @@ public class Enemy : MonoBehaviour
 
     void OnSave()
     {
-        if(SaveManager.saver.EnemySaves == null || SaveManager.saver.EnemySaves.Length != enemyCount)
+        if(SaveManager.saver.EnemySaves == null || SaveManager.saver.EnemySaves.Length != transform.parent.childCount)
         {
-            SaveManager.saver.EnemySaves = new EnemySave[enemyCount];
+            SaveManager.saver.EnemySaves = new EnemySave[transform.parent.childCount];
         }
 
         EnemySave save = new EnemySave();
@@ -87,7 +82,7 @@ public class Enemy : MonoBehaviour
 
         save = movement.OnSave(save);
         
-        SaveManager.saver.EnemySaves[enemyIndex] = save;
+        SaveManager.saver.EnemySaves[transform.GetSiblingIndex()] = save;
     }
 
     void OnEnable()

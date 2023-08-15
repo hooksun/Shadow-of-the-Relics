@@ -42,8 +42,6 @@ public class SaveManager : MonoBehaviour
     {
         OnSave = null;
         OnLoad = null;
-        Artifact.artifactCount = 0;
-        Enemy.enemyCount = 0;
     }
 }
 

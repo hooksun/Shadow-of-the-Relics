@@ -10,8 +10,6 @@ public class Artifact : MonoBehaviour
     public AudioPlayer collectedAudio;
 
     public static int collectedArtifacts;
-    public static int artifactCount;
-    int artifactIndex;
 
     Transform target;
     Vector2 velocity;
@@ -20,8 +18,6 @@ public class Artifact : MonoBehaviour
     void Awake()
     {
         this.enabled = false;
-        artifactIndex = artifactCount;
-        artifactCount++;
         collectedArtifacts = 0;
 
         SaveManager.OnLoad += OnLoad;
@@ -30,7 +26,7 @@ public class Artifact : MonoBehaviour
 
     void OnLoad()
     {
-        bool collected = SaveManager.saver.CollectedArtifacts[artifactIndex];
+        bool collected = SaveManager.saver.CollectedArtifacts[transform.GetSiblingIndex()];
         if(collected)
         {
             gameObject.SetActive(false);
@@ -40,11 +36,11 @@ public class Artifact : MonoBehaviour
 
     void OnSave()
     {
-        if(SaveManager.saver.CollectedArtifacts == null || SaveManager.saver.CollectedArtifacts.Length != artifactCount)
+        if(SaveManager.saver.CollectedArtifacts == null || SaveManager.saver.CollectedArtifacts.Length != transform.parent.childCount)
         {
-            SaveManager.saver.CollectedArtifacts = new bool[artifactCount];
+            SaveManager.saver.CollectedArtifacts = new bool[transform.parent.childCount];
         }
-        SaveManager.saver.CollectedArtifacts[artifactIndex] = !gameObject.activeInHierarchy;
+        SaveManager.saver.CollectedArtifacts[transform.GetSiblingIndex()] = !gameObject.activeInHierarchy;
     }
 
     void Update()

@@ -54,6 +54,8 @@ public class EnemyMovement : EnemyBehaviour
 
     public void StopChase()
     {
+        if(jumpTime > 0f)
+            return;
         FindNewPath();
     }
 
