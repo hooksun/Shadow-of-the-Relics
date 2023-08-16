@@ -32,6 +32,7 @@ public class Artifact : MonoBehaviour
             gameObject.SetActive(false);
             collectedArtifacts++;
             Gate.GetArtifact(collectedArtifacts);
+            Map.CollectArtifact(transform.GetSiblingIndex());
         }
     }
 
@@ -82,6 +83,7 @@ public class Artifact : MonoBehaviour
         collectedAudio.Play();
         collectedArtifacts++;
         Gate.GetArtifact(collectedArtifacts);
+        Map.CollectArtifact(transform.GetSiblingIndex());
 
         if(detectPlayer)
             Enemy.AllDetectPlayer(player.GetComponent<Player>());

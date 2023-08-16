@@ -29,6 +29,7 @@ public class Gate : MonoBehaviour
             return;
 
         GateRenderer.sprite = OpenGate;
+        Map.SetGateIcon(OpenGate);
         GateTrigger.enabled = true;
     }
 

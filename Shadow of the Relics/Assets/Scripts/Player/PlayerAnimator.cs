@@ -148,6 +148,7 @@ public class PlayerAnimator : PlayerBehaviour
 
         player.dead = true;//to respawn
         SaveManager.Save();
+        SaveManager.ResetDelegates();
         SceneManager.LoadScene(2);
     }
 }
