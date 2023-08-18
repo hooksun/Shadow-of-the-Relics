@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public SpriteRenderer sprite;
     public Animator Anim;
     public GameObject Corpse;
+    public DeathFade deathFade;
 
     public Vector2 respawnPosition;
     public float detectCooldown, stopDetectTime, latePositionTime, damageCooldown;
@@ -77,6 +78,7 @@ public class Player : MonoBehaviour
         animator.Respawn();
 
         Corpse.SetActive(false);
+        deathFade.gameObject.SetActive(false);
         sprite.enabled = true;
         GameplayMusic.SwitchMusic(false);
     }

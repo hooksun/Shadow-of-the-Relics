@@ -334,6 +334,7 @@ public class PlayerMovement : PlayerBehaviour
                 {
                     corpse = corpseTime;
                     player.Corpse.SetActive(true);
+                    player.deathFade.gameObject.SetActive(true);
                     player.sprite.enabled = false;
                 }
             }
