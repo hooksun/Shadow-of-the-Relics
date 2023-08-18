@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : PlayerBehaviour
 {
     public Rigidbody2D rb;
     public Camera cam;
+    public EventSystem eventSystem;
 
     public float speed, accel, airAccel, jumpHeight, airJumpHeight, airJumpMaxVelocity,
     coyoteTime, jumpGravity, fallGravity, diveGravity, JumpCooldown, damageParalyzedTime, corpseTime;
@@ -124,12 +126,19 @@ public class PlayerMovement : PlayerBehaviour
         }
     }
 
+    public void GrappleInputWithCtx(InputAction.CallbackContext ctx)
+    {
+        if(!ctx.started || eventSystem.IsPointerOverGameObject())
+            return;
+        GrappleInput();
+    }
+
     bool grappling, grappleAcceling;
     float grapplingSpeed, grappleCast;
     GrapplePoint grapplePoint, targettingPoint;
-    public void GrappleInput(InputAction.CallbackContext ctx)
+    public void GrappleInput()
     {
-        if(!ctx.started || paralyzed > 0f || Time.timeScale == 0f)
+        if(paralyzed > 0f || Time.timeScale == 0f)
             return;
 
         if(grappling)

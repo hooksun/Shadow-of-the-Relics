@@ -1496,7 +1496,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5972743943060547891}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: GrappleInput
+        m_MethodName: GrappleInputWithCtx
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
