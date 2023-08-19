@@ -51,12 +51,14 @@ public struct Saver
     public PlayerSave playerSave;
 
     public EnemySave[] EnemySaves;
-    public bool[] CollectedArtifacts;
+    public ArtifactState[] Artifacts;
 
     public Saver(float wtf)
     {
         playerSave = new PlayerSave();
         EnemySaves = new EnemySave[0];
-        CollectedArtifacts = new bool[0];
+        Artifacts = new ArtifactState[0];
     }
 }
+
+public enum ArtifactState{uncollected, carried, collected}

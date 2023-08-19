@@ -172,6 +172,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Map",
+            "id": "59477170-9afd-4bb2-8108-3d07a5ebcd6c",
+            "actions": [
+                {
+                    "name": "Toggle Map",
+                    "type": "Button",
+                    "id": "a0c3dc5c-0b60-4edd-8d6d-13187e26220d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "67edd3fc-ee81-445c-81ae-500125f00256",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Map",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

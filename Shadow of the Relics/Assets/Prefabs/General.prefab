@@ -237,6 +237,7 @@ MonoBehaviour:
   LevelBoundsStart: {x: 0, y: 0}
   LevelBoundsEnd: {x: 0, y: 0}
   OpenSpeed: 2
+  carriedArtifactRadius: 30
   OpenMapAudio: {fileID: 5336194412784971044}
 --- !u!1 &999806972424847148
 GameObject:

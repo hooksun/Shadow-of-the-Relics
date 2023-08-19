@@ -15,10 +15,11 @@ public class Gate : MonoBehaviour
 
     public static void GetArtifact(int artifacts) => instance.CollectArtifact(artifacts);
 
+    bool gateIsOpen;
+
     void Awake()
     {
         instance = this;
-        GateTrigger.enabled = false;
         CollectArtifact(0);
     }
 
@@ -29,12 +30,20 @@ public class Gate : MonoBehaviour
             return;
 
         GateRenderer.sprite = OpenGate;
+        gateIsOpen = true;
         Map.SetGateIcon(OpenGate);
-        GateTrigger.enabled = true;
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        Artifact.ScatterCarried(CrystalRenderer.transform, true);
     }
 
     void OnTriggerStay2D(Collider2D collider)
     {
+        if(!gateIsOpen)
+            return;
+
         GateTrigger.enabled = false;
         Player.activePlayer.EnterGate();
     }

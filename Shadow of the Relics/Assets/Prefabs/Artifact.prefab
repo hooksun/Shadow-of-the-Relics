@@ -101,8 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startVelocity: {x: 8, y: 15}
+  scatterStartSpeed: 10
   gravity: 90
   freeFallTime: 0.3
+  scatterTime: 0.1
   targettingTime: 0.5
   minScale: 0.3
   detectPlayer: 0

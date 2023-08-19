@@ -81,6 +81,7 @@ public class Player : MonoBehaviour
         deathFade.gameObject.SetActive(false);
         sprite.enabled = true;
         GameplayMusic.SwitchMusic(false);
+        Artifact.ResetCarried();
     }
 
     public void EnterGate()
