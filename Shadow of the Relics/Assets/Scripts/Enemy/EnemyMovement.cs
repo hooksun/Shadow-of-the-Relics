@@ -72,7 +72,7 @@ public class EnemyMovement : EnemyBehaviour
             SetTargetPos();
             return true;
         }
-        pathLinks = PathManager.PathFind(currentPath, target, transform.position, (enemy.aggro?enemy.Target.position:enemy.patrolPath.start));
+        pathLinks = PathManager.PathFind(currentPath, target, transform.position, (enemy.aggro?enemy.Target.position:enemy.patrolPosition));
         SetTargetPos();
         return true;
     }
@@ -81,6 +81,14 @@ public class EnemyMovement : EnemyBehaviour
     {
         if(pathLinks.Count == 0)
         {
+            if(!enemy.aggro)
+            {
+                targetPos = PointOnPath(enemy.patrolPosition, enemy.patrolPath);
+                if((Vector2)transform.position == targetPos)
+                    enemy.StartPatrol();
+                return;
+            }
+
             Vector2 pos = PointOnPath(enemy.Target.lastSeenPosition, currentPath);
             if(targetPos == pos)
             {
@@ -100,12 +108,6 @@ public class EnemyMovement : EnemyBehaviour
         if(jumpTime > 0f)
         {
             Jumping();
-            return;
-        }
-
-        if(!enemy.aggro && currentPath == enemy.patrolPath)
-        {
-            enemy.StartPatrol();
             return;
         }
 

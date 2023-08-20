@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public GameObject Corpse;
     public DeathFade deathFade;
 
-    public Vector2 respawnPosition;
+    public Vector2 respawnPosition, endPosition;
     public float detectCooldown, stopDetectTime, latePositionTime, damageCooldown;
     public AudioPlayer RangeHitAudio;
 
@@ -78,7 +78,7 @@ public class Player : MonoBehaviour
         animator.Respawn();
 
         Corpse.SetActive(false);
-        deathFade.gameObject.SetActive(false);
+        deathFade.enabled = false;
         sprite.enabled = true;
         GameplayMusic.SwitchMusic(false);
         Artifact.ResetCarried();
@@ -87,6 +87,12 @@ public class Player : MonoBehaviour
     public void EnterGate()
     {
         animator.EnterGate();
+    }
+
+    public void SaveEnding()
+    {
+        transform.position = endPosition;
+        movement.rb.velocity = Vector2.zero;
     }
 
     void OnLoad()

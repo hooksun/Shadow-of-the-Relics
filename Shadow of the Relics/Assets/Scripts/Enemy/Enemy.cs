@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     public Vector2 position{get=>transform.position;}
 
     [HideInInspector] public bool aggro, seePlayer;
+    [HideInInspector] public Vector2 patrolPosition;
     [HideInInspector] public Path patrolPath;
     [HideInInspector] public Player Target;
 
@@ -39,6 +40,8 @@ public class Enemy : MonoBehaviour
 
         SaveManager.OnLoad += OnLoad;
         SaveManager.OnSave += OnSave;
+
+        patrolPosition = transform.position;
     }
 
     void Start()

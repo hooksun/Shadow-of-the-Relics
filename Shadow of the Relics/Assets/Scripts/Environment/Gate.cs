@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Gate : MonoBehaviour
@@ -12,6 +13,8 @@ public class Gate : MonoBehaviour
     public Sprite OpenGate;
     public Sprite[] CrystalSprites;
     public Collider2D GateTrigger;
+
+    public UnityEvent OnOpenGate, OnPlayerEnter;
 
     public static void GetArtifact(int artifacts) => instance.CollectArtifact(artifacts);
 
@@ -32,6 +35,7 @@ public class Gate : MonoBehaviour
         GateRenderer.sprite = OpenGate;
         gateIsOpen = true;
         Map.SetGateIcon(OpenGate);
+        OnOpenGate.Invoke();
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -46,5 +50,6 @@ public class Gate : MonoBehaviour
 
         GateTrigger.enabled = false;
         Player.activePlayer.EnterGate();
+        OnPlayerEnter.Invoke();
     }
 }

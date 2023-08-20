@@ -1,23 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class EndingScene : MonoBehaviour
 {
-    public Image[] Backgrounds;
+    public CanvasGroup[] Backgrounds;
     public float showTime, fadeTime;
+    public int nextScene;
+
+    int current;
+    bool fading;
 
     void Start()
     {
         StartCoroutine(CutScene());
     }
 
-    IEnumerator CutScene()
+    public void Skip(InputAction.CallbackContext ctx)
     {
-        for(int i = 1; i < Backgrounds.Length; i++)
+        if(!ctx.started || fading)
+            return;
+
+        StopAllCoroutines();
+        StartCoroutine(CutScene(current+1));
+    }
+
+    IEnumerator CutScene(int start = 1)
+    {
+        for(int i = start; i < Backgrounds.Length; i++)
         {
+            current = i;
+            fading = true;
             float fade = fadeTime;
             while(fade > 0f)
             {
@@ -30,15 +46,14 @@ public class EndingScene : MonoBehaviour
             SetAlpha(Backgrounds[i-1], 0f);
             SetAlpha(Backgrounds[i], 1f);
 
+            fading = false;
             yield return new WaitForSeconds(showTime);
         }
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(nextScene);
     }
 
-    void SetAlpha(Image image, float a)
+    void SetAlpha(CanvasGroup image, float a)
     {
-        Color color = image.color;
-        color.a = a;
-        image.color = color;
+        image.alpha = a;
     }
 }

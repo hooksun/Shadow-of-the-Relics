@@ -33,6 +33,7 @@ public class Artifact : MonoBehaviour
     void OnLoad()
     {
         ArtifactState state = SaveManager.saver.Artifacts[transform.GetSiblingIndex()];
+        currentState = state;
         if(state != ArtifactState.uncollected)
         {
             gameObject.SetActive(false);

@@ -334,7 +334,7 @@ public class PlayerMovement : PlayerBehaviour
                 {
                     corpse = corpseTime;
                     player.Corpse.SetActive(true);
-                    player.deathFade.gameObject.SetActive(true);
+                    player.deathFade.enabled = true;
                     Artifact.ScatterCarried(null, false);
                     player.sprite.enabled = false;
                 }

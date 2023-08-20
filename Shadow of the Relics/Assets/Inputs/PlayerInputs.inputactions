@@ -200,6 +200,56 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Skip Cutscene",
+            "id": "8a7b96c4-4632-4ad7-8ed4-b614b13a86b8",
+            "actions": [
+                {
+                    "name": "Skip",
+                    "type": "Button",
+                    "id": "99b3795e-2c2b-43cd-ac7c-1e507de55360",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a8178bb5-ce62-45b4-bd5d-011cf8ee56e7",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "03994e0a-26ba-4855-9a69-a15bf9e6d580",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b6f0f113-bafc-4b22-951e-43e4b36d5643",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
