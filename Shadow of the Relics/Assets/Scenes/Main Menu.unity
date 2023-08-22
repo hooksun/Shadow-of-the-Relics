@@ -1204,6 +1204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingMenu: {fileID: 516270536}
+  quitButton: {fileID: 1632851195}
   ContinueButton: {fileID: 80942631}
 --- !u!1 &1164801004
 GameObject:
@@ -1839,7 +1840,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.2
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

@@ -211,6 +211,7 @@ public class PlayerMovement : PlayerBehaviour
         if(grappling)
             CancelGrapple();
         rb.velocity = knockback;
+        groundCooldown = groundCheckCooldown;
         isGrounded = false;
         player.animator.Play(player.animator.damagedAnim);
     }
@@ -337,6 +338,7 @@ public class PlayerMovement : PlayerBehaviour
                     player.deathFade.enabled = true;
                     Artifact.ScatterCarried(null, false);
                     player.sprite.enabled = false;
+                    velocity = Vector2.zero;
                 }
             }
             else

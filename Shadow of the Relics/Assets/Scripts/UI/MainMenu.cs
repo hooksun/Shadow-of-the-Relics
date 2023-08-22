@@ -6,13 +6,17 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject settingMenu;
+    public GameObject settingMenu, quitButton;
     public Button ContinueButton;
 
     void Awake()
     {
         if(!SaveManager.hasSaveFile)
             ContinueButton.interactable = false;
+
+        #if UNITY_WEBGL
+        quitButton.SetActive(false);
+        #endif
     }
 
     public void NewGame(int sceneID)

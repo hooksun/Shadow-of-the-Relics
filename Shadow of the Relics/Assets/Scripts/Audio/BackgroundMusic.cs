@@ -9,7 +9,7 @@ public class BackgroundMusic : MonoBehaviour
     public SettingManager settingManager;
 
     public AudioSource bgm;
-    protected float bgmVolume;
+    protected float bgmVolume, bgmTime;
 
     protected virtual void Start()
     {
@@ -25,16 +25,29 @@ public class BackgroundMusic : MonoBehaviour
 
     protected virtual void Pause(bool pause)
     {
-        if(pause)
-            bgm.Pause();
-        else
-            bgm.UnPause();
+        PauseBGM(pause);
     }
 
     protected virtual void SetVolume(float volume)
     {
+        float time = bgm.time;
         bgm.Pause();
         bgm.volume = bgmVolume * volume;
+        bgm.time = time;
         bgm.UnPause();
+    }
+
+    protected void PauseBGM(bool pause)
+    {
+        if(pause)
+        {
+            bgmTime = bgm.time;
+            bgm.Pause();
+        }
+        else
+        {
+            bgm.time = bgmTime;
+            bgm.Play();
+        }
     }
 }
