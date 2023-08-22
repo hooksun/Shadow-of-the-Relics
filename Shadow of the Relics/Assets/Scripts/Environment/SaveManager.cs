@@ -43,6 +43,15 @@ public class SaveManager : MonoBehaviour
         OnSave = null;
         OnLoad = null;
     }
+
+    #if UNITY_STANDALONE
+
+    void OnApplicationQuit()
+    {
+        Save();
+    }
+
+    #endif
 }
 
 [System.Serializable]
