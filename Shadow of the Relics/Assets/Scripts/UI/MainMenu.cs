@@ -22,12 +22,16 @@ public class MainMenu : MonoBehaviour
     public void NewGame(int sceneID)
     {
         SaveManager.loadOnStart = false;
+        SaveManager.ResetDelegates();
+        PauseMenu.isPaused = false;
         SceneManager.LoadScene(sceneID);
     }
 
     public void Continue(int sceneID)
     {
         SaveManager.loadOnStart = true;
+        SaveManager.ResetDelegates();
+        PauseMenu.isPaused = false;
         SceneManager.LoadScene(sceneID);
     }
 

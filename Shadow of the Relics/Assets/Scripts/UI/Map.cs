@@ -39,15 +39,15 @@ public class Map : MonoBehaviour
     void Awake()
     {
         instance = this;
+        gateIcon = Instantiate(IconPrefab, MapBounds);
+        gateIcon.sprite = GateIcon;
+        SetMapPosition(gateIcon, Gate.position);
         foreach(Transform artifact in Artifacts)
         {
             Image icon = Instantiate(IconPrefab, MapBounds);
             icon.sprite = artifact.GetComponent<SpriteRenderer>().sprite;
             SetMapPosition(icon, artifact.position);
         }
-        gateIcon = Instantiate(IconPrefab, MapBounds);
-        gateIcon.sprite = GateIcon;
-        SetMapPosition(gateIcon, Gate.position);
         IconPrefab.transform.SetAsLastSibling();
 
         gameObject.SetActive(false);
@@ -75,13 +75,14 @@ public class Map : MonoBehaviour
 
     public static void CollectArtifact(int index)
     {
-        instance.MapBounds.GetChild(index).gameObject.SetActive(false);
+        instance.MapBounds.GetChild(index+1).gameObject.SetActive(false);
     }
 
     public static void CarryArtifact(int index) => instance.carryArtifact(index);
 
     void carryArtifact(int index)
     {
+        index++;
         Vector2 dir = Vector2.up * carriedArtifactRadius;
         float angle = 2f * Mathf.PI / (carriedArtifacts.Count + 1);
         for(int i = 0; i < carriedArtifacts.Count; i++)
@@ -106,7 +107,7 @@ public class Map : MonoBehaviour
 
     public static void ResetArtifactPosition(Transform artifact)
     {
-        Transform icon = instance.MapBounds.GetChild(artifact.GetSiblingIndex());
+        Transform icon = instance.MapBounds.GetChild(artifact.GetSiblingIndex() + 1);
         instance.SetMapPosition(icon.GetComponent<Image>(), artifact.position);
     }
 

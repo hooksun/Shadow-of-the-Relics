@@ -148,7 +148,6 @@ public class PlayerAnimator : PlayerBehaviour
 
         player.SaveEnding();
         SaveManager.Save();
-        SaveManager.ResetDelegates();
         SceneManager.LoadScene(2);
     }
 }

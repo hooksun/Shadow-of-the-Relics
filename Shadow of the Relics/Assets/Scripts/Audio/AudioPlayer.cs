@@ -17,6 +17,7 @@ public class AudioPlayer : MonoBehaviour
     void OnEnable()
     {
         ActiveAudios.Add(this);
+        SetVolume(globalVolume);
     }
 
     void OnDisable()

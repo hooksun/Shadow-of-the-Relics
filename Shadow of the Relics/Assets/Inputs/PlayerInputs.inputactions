@@ -198,6 +198,17 @@
                     "action": "Toggle Map",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "106441b4-f004-4edd-9669-80bb84b17342",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Map",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
