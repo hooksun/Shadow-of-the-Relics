@@ -13,7 +13,7 @@ public class EnemyPatrolVision : EnemyBehaviour
 
     public Color DetectedColor;
 
-    void Start()
+    void Awake()
     {
         normalColor = sprite.color;
     }

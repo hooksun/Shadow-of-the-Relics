@@ -24,7 +24,7 @@ public class SettingManager : MonoBehaviour
         BackgroundMusic.SetMusicVolume(music);
     }
 
-    public static void OnSave()
+    public static void Save()
     {
         string json = JsonUtility.ToJson(settings);
 
@@ -39,16 +39,18 @@ public class SettingManager : MonoBehaviour
         music.value = settings.musicVolume;
     }
 
-    public void OnLoad()
+    public void Load()
     {
         if(!File.Exists(path))
         {
             settings = new Settings(1f, 1f);
-            return;
+        }
+        else
+        {
+            string json = File.ReadAllText(path);
+            settings = JsonUtility.FromJson<Settings>(json);
         }
         
-        string json = File.ReadAllText(path);
-        settings = JsonUtility.FromJson<Settings>(json);
         AudioPlayer.SetGlobalVolume(settings.volume);
         BackgroundMusic.SetMusicVolume(settings.musicVolume);
     }

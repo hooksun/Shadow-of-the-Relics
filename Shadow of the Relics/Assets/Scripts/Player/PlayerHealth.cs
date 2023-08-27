@@ -39,12 +39,12 @@ public class PlayerHealth : PlayerBehaviour
     {
         if(player.detected)
         {
-            cooldown = 0f;
+            cooldown = healCooldown;
             return;
         }
-        if(cooldown < healCooldown)
+        if(cooldown > 0f)
         {
-            cooldown += Time.deltaTime;
+            cooldown -= Time.deltaTime;
             return;
         }
         health = Mathf.MoveTowards(health, maxHealth, healSpeed * Time.deltaTime);
@@ -54,6 +54,7 @@ public class PlayerHealth : PlayerBehaviour
     public void SetHealth(float newHealth)
     {
         health = newHealth;
+        HealthBar.value = health;
     }
 
     public float GetHealth() => health;

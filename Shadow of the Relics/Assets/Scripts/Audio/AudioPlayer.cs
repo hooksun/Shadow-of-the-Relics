@@ -69,7 +69,13 @@ public class AudioPlayer : MonoBehaviour
 
     void SetVolume(float volume)
     {
+        if(!PauseMenu.isPaused)
+            source.Pause();
+
         source.volume = this.volume * volume;
+
+        if(!PauseMenu.isPaused)
+            source.UnPause();
     }
 
     public static void PauseAll(bool pause)

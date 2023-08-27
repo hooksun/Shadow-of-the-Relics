@@ -16,7 +16,7 @@ public class BackgroundMusic : MonoBehaviour
         instance = this;
         bgmVolume = bgm.volume;
 
-        settingManager.OnLoad();
+        settingManager.Load();
         bgm.Play();
     }
 
